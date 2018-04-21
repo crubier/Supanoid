@@ -2,6 +2,7 @@
 
 void pause(void)
 {
+	system("pause");
 	return;
 }
 
@@ -14,12 +15,15 @@ void mouvement(PTROBJET objet)
 void mouvements(void)
 {
     PTRCELLULE pcellule;
-    pcellule=origineliste;
+    pcellule=premierecellule();
+
     while(pcellule!=NULL)
     {
-        mouvement((*pcellule).element);
+		if( (*(*pcellule).element).couche !=0 )
+		{
+        	mouvement((*pcellule).element);
+		}
         pcellule=(*pcellule).suivant;
-        
     }
 }
 
@@ -129,7 +133,7 @@ void degradation(PTRCELLULE pcellule)
     if((*(*pcellule).element).solidite<=0)
 	{
 		(*(*pcellule).element).couche=0;
-		executercommande("jouerson[mort];");
+		executercommande("jouerson[mort];",VIDE);
 	}
 }
 
@@ -154,7 +158,7 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
         
             res=normalisation(res);
 
-			executercommande("jouerson[rebond1];");
+			executercommande("jouerson[rebond1];",VIDE);
 		}
         else
         {
@@ -177,7 +181,7 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
 
             res=normalisation(res);
 
-			executercommande("jouerson[rebond1];");        
+			executercommande("jouerson[rebond1];",VIDE);        
 		}
         else
         {
@@ -196,7 +200,7 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
 
             res=normalisation(res);
 
-			executercommande("jouerson[rebond1];");     
+			executercommande("jouerson[rebond1];",VIDE);     
         }
         else
         {
@@ -216,7 +220,7 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
 
             res=normalisation(res);
 
-			executercommande("jouerson[rebond2];");     
+			executercommande("jouerson[rebond2];",VIDE);     
         }
         else
         {
@@ -233,7 +237,7 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
           
             res=normalisation(res);
 
-			executercommande("jouerson[rebond2];");     
+			executercommande("jouerson[rebond2];",VIDE);     
         }
         else
         {

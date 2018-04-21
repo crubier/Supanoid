@@ -64,6 +64,7 @@ typedef struct cellulestruct
 PTRCELLULE origineliste;
 PTRCELLULE fenetre;
 PTRCELLULE raquette;
+PTRCELLULE focus;
 int fini;
 FILE* journal;
 char repertoire[LONGCHAINE];
@@ -81,6 +82,7 @@ void action_affichernoms(char* chaine);
 void action_cachernoms(char* chaine);
 void action_executer(char* chaine);
 void action_ecrire(char* chaine);
+void action_modifierparametre(char* chaine);
 
 /*GEOMETRIE*/
 COORD vecteur(float x, float y);
@@ -99,7 +101,6 @@ float distanceaxe(COORD a, COORD b, COORD axe);
 COORD arrondi(COORD a);
 
 /*GRAPHIQUE*/
-void effacer(void);
 void dessin(void);
 void clavier(void);
 void dessiner(PTRCELLULE pcellule);
@@ -199,9 +200,12 @@ char* ecrireLISTE(void);
 PTRCELLULE lireOBJET(char* chaine);
 char* ecrireOBJET(OBJET a);
 
-char* executercommande(char* lignecommande);
+char* executercommande(char* lignecommande,char* argumentsfichierparent);
 char* executerfichier(char* parametres);
 void entrerpropriete(PTRCELLULE pcellule, char* propriete, char* valeur);
+char* afficherpropriete(PTRCELLULE pcellule, char* propriete);
+char* afficherparametre(char* chaine);
+void demanderparametres();
 
 /*PHYSIQUE*/
 void pause(void);

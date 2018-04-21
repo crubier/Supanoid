@@ -3,7 +3,7 @@
 void action_jouerson(char* chaine)
 {
 	char nomfichier[LONGCHAINE];
-	sprintf(nomfichier,"%s/sons/%s.wav",repertoire,chaine+1*LONGCHAINE*sizeof(char));
+	sprintf(nomfichier,"mondes/%s/sons/%s.wav",repertoire,chaine+1*LONGCHAINE*sizeof(char));
 	registerSound(nomfichier);
     playSound(nomfichier);
 }
@@ -69,4 +69,38 @@ void action_executer(char* chaine)
 void action_ecrire(char* chaine)
 {
 	printf("%s\n",chaine+1*LONGCHAINE*sizeof(char));
+}
+
+void action_modifierparametre(char* chaine)
+{
+	if(strcmp(chaine+1*LONGCHAINE*sizeof(char),"dt")==0)
+	{
+		DT=lirefloat(chaine+2*LONGCHAINE*sizeof(char));
+	}
+
+	if(strcmp(chaine+1*LONGCHAINE*sizeof(char),"sensibilite")==0)
+	{
+		SENSIBILITE=lirefloat(chaine+2*LONGCHAINE*sizeof(char));
+	}
+
+	if(strcmp(chaine+1*LONGCHAINE*sizeof(char),"attraction")==0)
+	{
+		ATTRACTION=lirefloat(chaine+2*LONGCHAINE*sizeof(char));
+	}
+
+	if(strcmp(chaine+1*LONGCHAINE*sizeof(char),"focus")==0)
+	{
+		if(lireOBJET(chaine+2*LONGCHAINE*sizeof(char))!=NULL)
+		{
+			focus=lireOBJET(chaine+2*LONGCHAINE*sizeof(char));
+		}
+		else
+		{
+			focus=fenetre;
+		}
+		if(focus==NULL)
+		{
+			focus=fenetre;
+		}
+	}
 }
