@@ -53,7 +53,7 @@ BuildCmd=
 Major=0
 Minor=1
 Release=0
-Build=157
+Build=197
 LanguageID=1036
 CharsetID=1252
 CompanyName=LECRUBIER OLIVIER
@@ -101,7 +101,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=graphique.c
+FileName=interface.c
 CompileCpp=0
 Folder=Supanoid
 Compile=1

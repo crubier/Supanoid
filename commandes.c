@@ -1,5 +1,13 @@
 #include "supanoid.h"
 
+/*=======================================================*/
+/*                   Commandes.c                         */
+/*=======================================================*/
+/* Ce fichier contient les fonctions relatives aux       */
+/* commandes donnees par l'utilisateur, l'interpretation,*/
+/* l'execution, l'appel à des sous commandes etc...      */
+/*=======================================================*/
+
 char* lireligne(char* lignecommande)
 {
     char* arguments;
@@ -130,7 +138,11 @@ char* executerfichier(char* parametres)
 	}
 	
 
-	fprintf(journal,"Ouverture fichier %s\n",nomfichier);	
+	if(modefonctionnement>=1);
+	{
+		fprintf(journal,"Ouverture fichier %s\n",nomfichier);	
+	}
+
 	do
 	{
 		strcpy(lignecommande,VIDE);
@@ -293,8 +305,6 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 					
 				 );
 			res=ecrirefloat(r);
-			printf("Aleatoire : %s\n",res);
-
 		}
 
 	//Reperage
@@ -387,6 +397,31 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 		{
 			res= ecrireint(nombrecellules());
 		}
+
+		if(strcmp(parametres,"nombreobjetstype")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,1);
+			IDENTIFIANT identifiant;
+			identifiant=lireIDENTIFIANT(parametres + 1*LONGCHAINE*sizeof(char));
+			res= ecrireint(nombretype(&identifiant));
+		}
+
+		if(strcmp(parametres,"nombreobjetstypenom")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,1);
+			IDENTIFIANT identifiant;
+			identifiant=lireIDENTIFIANT(parametres + 1*LONGCHAINE*sizeof(char));
+			res= ecrireint(nombretypenom(&identifiant));
+		}
+
+		if(strcmp(parametres,"nombreobjetstypenomnumero")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,1);
+			IDENTIFIANT identifiant;
+			identifiant=lireIDENTIFIANT(parametres + 1*LONGCHAINE*sizeof(char));
+			res= ecrireint(nombretypenomnumero(&identifiant));
+		}
+
 	
 	// identifiants
 	

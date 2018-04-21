@@ -1,5 +1,16 @@
 #include "supanoid.h"
 
+/*=======================================================*/
+/*                   Graphique.c                         */
+/*=======================================================*/
+/* Ce fichier contient les fonctions liees a l'interface */
+/* utilisateur,n s'appuyant principalement sur           */
+/* le TDA 'COORD' et les reels                           */
+/* Ces fonctions sont principalement utilisees par       */
+/* le moteur physique, mais peuvent aussi etre appelees  */
+/* par l'utilisateur                                     */
+/*=======================================================*/
+
 void clavier(void)
 {
 	char temp[LONGCHAINE];

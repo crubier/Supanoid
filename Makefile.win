@@ -5,8 +5,8 @@ CPP  = g++.exe
 CC   = gcc.exe
 WINDRES = windres.exe
 RES  = Projet_private.res
-OBJ  = main.o physique.o geometrie.o manipulations.o actions.o graphic.o graphique.o commandes.o $(RES)
-LINKOBJ  = main.o physique.o geometrie.o manipulations.o actions.o graphic.o graphique.o commandes.o $(RES)
+OBJ  = main.o physique.o geometrie.o manipulations.o actions.o graphic.o interface.o commandes.o $(RES)
+LINKOBJ  = main.o physique.o geometrie.o manipulations.o actions.o graphic.o interface.o commandes.o $(RES)
 LIBS =  -L"C:/Dev-Cpp/lib" -L"C:/Dev-Cpp/lib" -L"lib/win32" -L"lib" lib/win32/libjvm.a  
 INCS =  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include"  -I"include"  -I"include/win32" 
 CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include"  -I"include"  -I"include/win32" 
@@ -44,8 +44,8 @@ actions.o: actions.c
 graphic.o: graphic.c
 	$(CC) -c graphic.c -o graphic.o $(CFLAGS)
 
-graphique.o: graphique.c
-	$(CC) -c graphique.c -o graphique.o $(CFLAGS)
+interface.o: interface.c
+	$(CC) -c interface.c -o interface.o $(CFLAGS)
 
 commandes.o: commandes.c
 	$(CC) -c commandes.c -o commandes.o $(CFLAGS)

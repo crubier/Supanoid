@@ -1,5 +1,16 @@
 #include "supanoid.h"
 
+/*=======================================================*/
+/*                   Actions.c                           */
+/*=======================================================*/
+/* Ce fichier contient certaines fonctions relatives     */
+/* aux actions que l'utilisateur peut effectuer          */
+/* Ces fonctions sont appellees depuis la fonction       */
+/* executercommande dans commandes.c.                    */
+/* D'autres fonctions plus simples relatives aux actions */
+/* sont integrées dans la fonction executercommande      */
+/*=======================================================*/
+
 void action_jouer(char* chaine)
 {
 	char nomfichier[LONGCHAINE];
@@ -43,14 +54,26 @@ void action_modifierpropriete(char* chaine)
 
 void action_initialiser(char* chaine)
 {
-    cloture();
-	cloturegraphique();
-	origineliste=NULL;
-    executerfichier("monde");
-    initialisation();
-	initialisationgraphique();
-    executerfichier("initialisation");
+	printf("action_initialiser");
+	system("pause");
 
+	cloture();
+	printf("cloture");
+	system("pause");
+
+	executercommande("monde[]",VIDE);;
+	printf("monde");
+	system("pause");
+
+    initialisation();
+	printf("initialisation");
+	system("pause");
+
+	executercommande("initialisation[]",VIDE);
+	printf("initialisation");
+	system("pause");
+
+	executercommande("decrireliste[]",VIDE);
 }
 
 void action_affichernoms(char* chaine)

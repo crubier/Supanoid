@@ -1,10 +1,12 @@
 #include "supanoid.h"
 
-void pause(void)
-{
-	system("pause");
-	return;
-}
+/*=======================================================*/
+/*                       Physique.c                      */
+/*=======================================================*/
+/* Ce fichier contient le moteur physique du jeu, cad    */
+/* la gestion des collisions, des différentes couches,   */
+/* de l'attraction entre les objets, les rebonds etc...  */
+/*=======================================================*/
 
 void mouvement(PTROBJET objet)
 {
@@ -141,11 +143,7 @@ void degradation(PTRCELLULE pcellule)
 {
     if((*(*pcellule).element).solidite<=0)
 	{
-		(*(*pcellule).element).couche=0;
-		char temp[LONGCHAINE];
-		sprintf(temp,"evenements/mort[%s];",ecrireIDENTIFIANT(*(*pcellule).identifiant));
-		executercommande(temp,VIDE);
-
+		supprimercellule(pcellule);
 	}
 }
 

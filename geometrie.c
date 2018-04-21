@@ -1,5 +1,16 @@
 #include "supanoid.h"
 
+/*=======================================================*/
+/*                   Geometrie.c                         */
+/*=======================================================*/
+/* Ce fichier contient les fonctions de base de la       */
+/* géometrie, en s'appuyant principalement sur           */
+/* le TDA 'COORD' et les reels                           */
+/* Ces fonctions sont principalement utilisees par       */
+/* le moteur physique, mais peuvent aussi etre appelees  */
+/* par l'utilisateur                                     */
+/*=======================================================*/
+
 COORD vecteur(float x, float y)
 {
     COORD res;
@@ -75,11 +86,6 @@ float norme(COORD a)
 float total(COORD a)
 {
     return a.x+a.y;
-}
-
-float distanceaxe(COORD a, COORD b, COORD axe)
-{
-    return produitscalaire(difference(a,b),normalisation(axe));
 }
 
 COORD arrondi(COORD a)

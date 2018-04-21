@@ -1,5 +1,15 @@
 #include "supanoid.h"
 
+/*=======================================================*/
+/*                   Manipulations.c                     */
+/*=======================================================*/
+/* Ce fichier contient toutes les fonction concernant    */
+/* la gestion des listes, des cellules, de leur contenu  */
+/* (objets et identifiant), la modification des          */
+/* parametres , la recherhce d'elements etc...           */
+/*=======================================================*/
+
+
 /* Manipulation des objets                  */
 
 PTROBJET creerobjet
@@ -104,6 +114,14 @@ PTROBJET nouvelobjet(void)
     );
 }
 
+void supprimerobjet(PTROBJET pobjet)
+{
+    if(pobjet==NULL)return;
+	free((*pobjet).graphique);
+	free((*pobjet).texte);
+	free(pobjet);
+}
+
 /* Manipulation des identifiants            */
 
 PTRIDENTIFIANT creeridentifiant
@@ -148,6 +166,14 @@ PTRIDENTIFIANT nouvelidentifiant(void)
         "INCONNU",
         0
     );
+}
+
+void supprimeridentifiant(PTRIDENTIFIANT pidentifiant)
+{
+    if(pidentifiant==NULL)return;
+	free((*pidentifiant).type);
+	free((*pidentifiant).nom);
+	free(pidentifiant);
 }
 
 /* Manipulation des cellules                */
@@ -204,14 +230,14 @@ PTRCELLULE nouvellecellule(void)
     );
 }
 
-/////////////////
 
 void supprimercellule(PTRCELLULE pcellule)
 {
-	if(pcellule==NULL)
-	{
-		return;
-	}
+	if(pcellule==NULL)return;
+
+	char temp[LONGCHAINE];
+	sprintf(temp,"evenements/mort[%s];",ecrireIDENTIFIANT(*(*pcellule).identifiant));
+	executercommande(temp,VIDE);
 
 	if((*pcellule).suivant!=NULL && (*pcellule).precedent!=NULL)
 	{
@@ -251,6 +277,11 @@ void supprimercellule(PTRCELLULE pcellule)
 	
 	(*pcellule).precedent=NULL;
 	(*pcellule).suivant=NULL;
+
+	supprimerobjet((*pcellule).element);
+	supprimeridentifiant((*pcellule).identifiant);
+	free(pcellule);
+
 }
 
 void liercellules(PTRCELLULE pcellulea, PTRCELLULE pcelluleb)
@@ -394,6 +425,57 @@ PTRIDENTIFIANT prochainidentifiant(PTRIDENTIFIANT pidentifiantdepart)
 	return copieridentifiant(pidentifiant);
 }	
 
+int nombretype(PTRIDENTIFIANT pidentifiant)
+{
+	int res;
+	PTRCELLULE pcellule;
+	pcellule=premierecellule();
+	res=0;
+	while(pcellule!=NULL)
+	{
+		if(compareridentifiantstype(pidentifiant,(*pcellule).identifiant)==0)
+		{
+			res++;
+		}
+		pcellule=(*pcellule).suivant;
+	}
+	return res;
+}
+
+int nombretypenom(PTRIDENTIFIANT pidentifiant)
+{
+	int res;
+	PTRCELLULE pcellule;
+	pcellule=premierecellule();
+	res=0;
+	while(pcellule!=NULL)
+	{
+		if(compareridentifiantstypenom(pidentifiant,(*pcellule).identifiant)==0)
+		{
+			res++;
+		}
+		pcellule=(*pcellule).suivant;
+	}
+	return res;
+}
+
+int nombretypenomnumero(PTRIDENTIFIANT pidentifiant)
+{
+	int res;
+	PTRCELLULE pcellule;
+	pcellule=premierecellule();
+	res=0;
+	while(pcellule!=NULL)
+	{
+		if(compareridentifiantstypenomnumero(pidentifiant,(*pcellule).identifiant)==0)
+		{
+			res++;
+		}
+		pcellule=(*pcellule).suivant;
+	}
+	return res;
+}
+
 PTRCELLULE recherchertype(PTRIDENTIFIANT pidentifiant, PTRCELLULE pi, int sens)
 {
     PTRCELLULE pcellule;
@@ -445,6 +527,7 @@ PTRCELLULE recherchertypenom(PTRIDENTIFIANT pidentifiant, PTRCELLULE pi, int sen
 
     return NULL;
 }
+
 
 PTRCELLULE recherchertypenomnumero(PTRIDENTIFIANT pidentifiant, PTRCELLULE pi, int sens)
 {
