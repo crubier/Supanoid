@@ -1,27 +1,48 @@
-CC=mingw32-gcc
-DEL=rm
+# Project: Projet
+# Makefile created by Dev-C++ 4.9.9.2
 
-CCOPTS=-g -Wall
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = graphic.o main.o physique.o graphique.o geometrie.o objets.o fichiers.o $(RES)
+LINKOBJ  = graphic.o main.o physique.o graphique.o geometrie.o objets.o fichiers.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib" -L"C:/Dev-Cpp/lib" -L"D:/BE_info/V1/lib" lib/libjvm.a  
+INCS =  -I"C:/Dev-Cpp/include"  -I"D:/BE_info/V1/include"  -I"C:/Dev-Cpp/include" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"D:/BE_info/V1/include"  -I"C:/Dev-Cpp/include" 
+BIN  = Projet.exe
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS)  
+RM = rm -f
 
-PLATFORM=win32
+.PHONY: all all-before all-after clean clean-custom
 
-JNI_INCL=-Iinclude -Iinclude\\${PLATFORM}
+all: all-before Projet.exe all-after
 
-JVM_LIB=lib\\win32\\libjvm.a
 
-supanoid.exe: main.o list.o graphic.o ${JVM_LIB}
-	${CC} main.o list.o graphic.o ${CCOPTS} ${JVM_LIB} -o supanoid
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
 
-list.o: list.h main.h list.c
-	${CC} ${CCOPTS} -c list.c -o list.o
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "Projet.exe" $(LIBS)
 
-main.o:	main.c main.h
-	${CC} ${CCOPTS} -c main.c -o main.o
+graphic.o: graphic.c
+	$(CC) -c graphic.c -o graphic.o $(CFLAGS)
 
-graphic.o: graphic.c graphic.h key.h
-	${CC} ${CCOPTS} ${JNI_INCL} -c graphic.c -o graphic.o
+main.o: main.c
+	$(CC) -c main.c -o main.o $(CFLAGS)
 
-clean:
-	${DEL} *.exe 
-	${DEL} *.o
+physique.o: physique.c
+	$(CC) -c physique.c -o physique.o $(CFLAGS)
 
+graphique.o: graphique.c
+	$(CC) -c graphique.c -o graphique.o $(CFLAGS)
+
+geometrie.o: geometrie.c
+	$(CC) -c geometrie.c -o geometrie.o $(CFLAGS)
+
+objets.o: objets.c
+	$(CC) -c objets.c -o objets.o $(CFLAGS)
+
+fichiers.o: fichiers.c
+	$(CC) -c fichiers.c -o fichiers.o $(CFLAGS)

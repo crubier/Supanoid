@@ -1,6 +1,7 @@
 #ifndef __KEY_H__
 #define __KEY_H__
 
+
 #define VK_ENTER          '\n'
 #define VK_BACK_SPACE     '\b'
 #define VK_TAB            '\t'

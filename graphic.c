@@ -106,6 +106,7 @@ void start(int width, int height)
     exit(-4);
   }
 
+
   // Création de la Frame
   frame = (*env)->NewObject(env, frame_cls, frame_constructor_method, width, height);
   if (frame == NULL) {
