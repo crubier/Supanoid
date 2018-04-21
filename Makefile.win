@@ -5,8 +5,8 @@ CPP  = g++.exe -D__DEBUG__
 CC   = gcc.exe -D__DEBUG__
 WINDRES = windres.exe
 RES  = Projet_private.res
-OBJ  = graphic.o main.o physique.o graphique.o geometrie.o objets.o fichiers.o listes.o $(RES)
-LINKOBJ  = graphic.o main.o physique.o graphique.o geometrie.o objets.o fichiers.o listes.o $(RES)
+OBJ  = main.o physique.o geometrie.o manipulations.o actions.o graphic.o graphique.o $(RES)
+LINKOBJ  = main.o physique.o geometrie.o manipulations.o actions.o graphic.o graphique.o $(RES)
 LIBS =  -L"C:/Dev-Cpp/lib" -L"C:/Dev-Cpp/lib" -L"lib/win32" -L"lib" lib/win32/libjvm.a  -g3 
 INCS =  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include"  -I"include"  -I"include/win32" 
 CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include"  -I"include"  -I"include/win32" 
@@ -26,29 +26,26 @@ clean: clean-custom
 $(BIN): $(OBJ)
 	$(CC) $(LINKOBJ) -o "Supanoid.exe" $(LIBS)
 
-graphic.o: graphic.c
-	$(CC) -c graphic.c -o graphic.o $(CFLAGS)
-
 main.o: main.c
 	$(CC) -c main.c -o main.o $(CFLAGS)
 
 physique.o: physique.c
 	$(CC) -c physique.c -o physique.o $(CFLAGS)
 
-graphique.o: graphique.c
-	$(CC) -c graphique.c -o graphique.o $(CFLAGS)
-
 geometrie.o: geometrie.c
 	$(CC) -c geometrie.c -o geometrie.o $(CFLAGS)
 
-objets.o: objets.c
-	$(CC) -c objets.c -o objets.o $(CFLAGS)
+manipulations.o: manipulations.c
+	$(CC) -c manipulations.c -o manipulations.o $(CFLAGS)
 
-fichiers.o: fichiers.c
-	$(CC) -c fichiers.c -o fichiers.o $(CFLAGS)
+actions.o: actions.c
+	$(CC) -c actions.c -o actions.o $(CFLAGS)
 
-listes.o: listes.c
-	$(CC) -c listes.c -o listes.o $(CFLAGS)
+graphic.o: graphic.c
+	$(CC) -c graphic.c -o graphic.o $(CFLAGS)
+
+graphique.o: graphique.c
+	$(CC) -c graphique.c -o graphique.o $(CFLAGS)
 
 Projet_private.res: Projet_private.rc 
 	$(WINDRES) -i Projet_private.rc --input-format=rc -o Projet_private.res -O coff 

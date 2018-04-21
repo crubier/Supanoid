@@ -2,49 +2,182 @@
 
 void effacer(void)
 {
-    clearRect(0, 0, (int)fenetre.dimensions.x, (int)fenetre.dimensions.y);
+    clearRect(0, 0, (int)(*(*fenetre).element).dimensions.x, (int)(*(*fenetre).element).dimensions.y);
+}
+
+void clavier(void)
+{
+	switch (getLastKeyPressed())
+        { 
+            case -1:
+                break;
+            case VK_LEFT:
+                (*(*raquette).element).acceleration.x=-SENSIBILITE;
+                break;
+            case VK_RIGHT:
+                (*(*raquette).element).acceleration.x=SENSIBILITE;
+                break;
+            case VK_UP:
+                (*(*raquette).element).acceleration.y=-SENSIBILITE;
+                break;
+            case VK_DOWN:   
+                (*(*raquette).element).acceleration.y=SENSIBILITE;
+                break;
+            case VK_Q:
+                (*(*fenetre).element).acceleration.x=-SENSIBILITE;
+                break;
+            case VK_D:
+                (*(*fenetre).element).acceleration.x=SENSIBILITE;
+                break;
+            case VK_Z:
+                (*(*fenetre).element).acceleration.y=-SENSIBILITE;
+                break;
+            case VK_S:
+                (*(*fenetre).element).acceleration.y=SENSIBILITE;
+                break;
+            case VK_ESCAPE:
+                fini = 1;      
+                break;
+			case VK_A:
+				(*(*fenetre).element).position=lireCOORD("(0:0)");
+				(*(*fenetre).element).vitesse=lireCOORD("(0:0)");
+				(*(*fenetre).element).acceleration=lireCOORD("(0:0)");
+				break;
+            case VK_F1:
+                decrireLISTEdetail();
+                break;
+            case VK_F2:
+                effacer();
+                break;
+            case VK_F3:
+                DT*=2;
+                break;
+            case VK_F4:
+                DT/=2;
+                break;
+			case VK_F6:
+				SENSIBILITE/=1.05;
+				break;
+			case VK_F7:
+				SENSIBILITE*=1.05;
+				break;
+            case VK_P:
+                pause();
+                break;
+        }
 }
 
 void dessin(void)
 {
     PTRCELLULE pcellule;
-    pcellule=premierecellule(originelisteactifs);
-    while(pcellule!=NULL)
+    int i;
+    pcellule=premierecellule();
+    for(i=1;i<=32;i*=2)
     {
-        dessiner((*(*pcellule).element));
-        pcellule=(*pcellule).suivant;
+        while(pcellule!=NULL)
+        {
+            if( i & (*(*pcellule).element).couche != 0 )     //Comparaison des couches
+            {
+                dessiner(pcellule);
+            }
+            pcellule=(*pcellule).suivant;
+        }
     }
+    paint(); 
 }
 
-void dessiner(OBJET objet)
+void dessiner(PTRCELLULE pcellule)
 {
     FILE* fichier;
-   	char nom[LONGUEURMAXCHAINE];
+   	char nom[LONGCHAINE];
+    float x,y;
+    x=((*(*pcellule).element).position.x-0.5*(*(*pcellule).element).dimensions.x)-((*(*fenetre).element).position.x-0.5*(*(*fenetre).element).dimensions.x);
+    y=((*(*pcellule).element).position.y-0.5*(*(*pcellule).element).dimensions.y)-((*(*fenetre).element).position.y-0.5*(*(*fenetre).element).dimensions.y);
    	
-    setForegroundColor(objet.couleur);
-    if(strcmp(objet.graphique,"INCONNU")!=0)/*si le fichier n'existe pas, rien ne sera affiché, les formes seront affichée sulement si graphique = AUCUN*/
+    setForegroundColor((*(*pcellule).element).couleur);
+    if(strcmp((*(*pcellule).element).graphique,"INCONNU")!=0)/*si le fichier n'existe pas, rien ne sera affiché, les formes seront affichée sulement si graphique = INCONNU*/
     {
-        strcpy(nom,"images/");
-        strcat(nom,objet.graphique);
-        drawImage(nom, objet.position.x-0.5*objet.dimensions.x, objet.position.y-0.5*objet.dimensions.y);
+        sprintf(nom,"%s/images/%s.png",repertoire,(*(*pcellule).element).graphique);
+        drawImage(nom, x,y);
     }
     else
     {
-        if(objet.forme==RECTANGLE)
+        if((*(*pcellule).element).forme==CERCLE) 
         {
-            drawRect(objet.position.x-0.5*objet.dimensions.x,objet.position.y-0.5*objet.dimensions.y, objet.dimensions.x, objet.dimensions.y);
+            fillOval(x,y, (*(*pcellule).element).dimensions.x, (*(*pcellule).element).dimensions.y);
         }
-    
-        if(objet.forme==CERCLE) 
+        else
         {
-            drawOval(objet.position.x-0.5*objet.dimensions.x,objet.position.y-0.5*objet.dimensions.y, objet.dimensions.x, objet.dimensions.y);
+            fillRect(x,y, (*(*pcellule).element).dimensions.x, (*(*pcellule).element).dimensions.y);
         }
     }
 }
 
-void initialisationgraphiques(void)
+void decrireLISTE(void)
 {
-    start((int)fenetre.dimensions.x, (int)fenetre.dimensions.y);
+	printf("Ecriture description de la liste\n");
+	fprintf(journal,"Liste : %s\n",ecrireLISTE());
+}
+
+void decrireLISTEdetail(void)
+{
+	char res[LONGCHAINE];
+	char temp[LONGCHAINE];
+	printf("Ecriture description detaillee de la liste\n");
+	int i;
+	
+		fprintf(journal,"==================================================\n");
+		fprintf(journal,"Description détaillée de la liste\n");
+		fprintf(journal,"==================================================\n\n");
+
+	strcpy(temp,VIDE);
+	for(i=1;i<=nombrecellules();i++)
+	{
+		fprintf(journal,"--------------------------------------------------\n");
+		fprintf(journal,"Objet : %s \n\n",ecrireIDENTIFIANT(*(*cellulenumero(i)).identifiant));
+		fprintf(journal,"%s\n",ecrireOBJET(*(*cellulenumero(i)).element));
+		fprintf(journal,"--------------------------------------------------\n");
+	}
+
+		fprintf(journal,"==================================================\n");
+		fprintf(journal,"Fin de la escription détaillée de la liste\n");
+		fprintf(journal,"==================================================\n\n");
+
+}
+
+void decrireCELLULE(PTRCELLULE pcellule)
+{
+	if(pcellule==NULL)
+	{
+		fprintf(journal,"NULL\n");
+	}
+	else
+	{
+		fprintf(journal,"%s\n",ecrireIDENTIFIANT(*(*pcellule).identifiant));
+	}
+}
+
+void initialisation(void)
+{
+
+	fprintf(journal,"Initialisation ");
+    fenetre=rechercher(creeridentifiant("fenetre","fenetre",0));
+    raquette=rechercher(creeridentifiant("raquette","raquette",0));
+	fprintf(journal,"fenetre : %s ",ecrireIDENTIFIANT(*(*fenetre).identifiant));
+
+	SENSIBILITE=0.2;
+    DT=0.002;
+	fini = 0;
+
+
+    start((int)(*(*fenetre).element).dimensions.x,(int)(*(*fenetre).element).dimensions.y);
+
+    setBackgroundColor(BLACK);
+    setForegroundColor(RED);
+    clearRect(0, 0, 800, 800);
+
+	fprintf(journal,": OK\n");
+
     registerKeyPressed(VK_LEFT);       
     registerKeyPressed(VK_RIGHT);     
     registerKeyPressed(VK_UP);       
@@ -52,53 +185,58 @@ void initialisationgraphiques(void)
     registerKeyPressed(VK_F1); 
     registerKeyPressed(VK_F2); 
     registerKeyPressed(VK_F3); 
-    registerKeyPressed(VK_F4); 
+    registerKeyPressed(VK_F4);
+    registerKeyPressed(VK_F5); 
+    registerKeyPressed(VK_F6); 
+    registerKeyPressed(VK_F7); 
+    registerKeyPressed(VK_F8); 
+    registerKeyPressed(VK_F9); 
+    registerKeyPressed(VK_F10); 
+    registerKeyPressed(VK_F11); 
+    registerKeyPressed(VK_F12); 
+    registerKeyPressed(VK_A);
+    registerKeyPressed(VK_B);
+    registerKeyPressed(VK_C);
+    registerKeyPressed(VK_D);
+    registerKeyPressed(VK_E);
+    registerKeyPressed(VK_F);
+    registerKeyPressed(VK_G);
+    registerKeyPressed(VK_H);
+    registerKeyPressed(VK_I);
+    registerKeyPressed(VK_J);
+    registerKeyPressed(VK_K);
+    registerKeyPressed(VK_L);
+    registerKeyPressed(VK_M);
+    registerKeyPressed(VK_N);
+    registerKeyPressed(VK_O);
     registerKeyPressed(VK_P);
     registerKeyPressed(VK_Q);
-    registerSound("sons/b.wav");
-    DT=0.002;
+    registerKeyPressed(VK_R);
+    registerKeyPressed(VK_S);
+    registerKeyPressed(VK_T);
+    registerKeyPressed(VK_U);
+    registerKeyPressed(VK_V);
+    registerKeyPressed(VK_W);
+    registerKeyPressed(VK_X);
+    registerKeyPressed(VK_Y);
+    registerKeyPressed(VK_Z);
 
-    setBackgroundColor(fenetre.couleur);        
-    clearRect(0, 0, (int)fenetre.dimensions.x, (int)fenetre.dimensions.y);      
+
+    setBackgroundColor((*(*fenetre).element).couleur);        
+    clearRect(0, 0, (int)(*(*fenetre).element).dimensions.x, (int)(*(*fenetre).element).dimensions.y);      
 }
 
-void indiquer(COORD a)
+void cloture(void)
 {
-    printf("( %g , %g )",a.x,a.y);   
+    finish(); 
 }
 
-void decrire(OBJET a)
+void rapportererreur(void)
 {
-    printf("\n============================================\n\n");
-    printf("Nom            = %s \n",a.nom);
-    printf("Identifiant    = %d\n",a.identifiant);
-    printf("\n");
-    printf("Position       = ");indiquer(a.position);printf("\n");
-    printf("Vitesse        = ");indiquer(a.vitesse);printf("\n");
-    printf("Acceleration   = ");indiquer(a.acceleration);printf("\n");
-    printf("\n");
-    printf("Dimensions     = ");indiquer(a.dimensions);printf("\n");
-    printf("Solidite       = %f\n",a.solidite);
-    printf("Masse          = %f\n",a.masse);
-    printf("Frottement     = %f\n",a.frottement);
-    printf("Rebondissement = %f\n",a.rebondissement);
-    printf("\n");
-    printf("Graphique      = %s \n",a.graphique);
-    printf("Forme          = %d \n",a.forme);
-    printf("\n============================================\n\n");
+    if(strcmp(erreur,VIDE)!=0)
+    {
+        printf("\nDescription erreur==========================\n\n");
+        printf("%s\n",erreur);
+        printf("\nFin Description erreur =====================\n\n");
+    }
 }
-
-void identifier(OBJET a)
-{
-    printf("\n============================================\n\n");
-    printf("Type           = %s \n",a.type);
-    printf("Nom            = %s \n",a.nom);
-    printf("Identifiant    = %d\n",a.identifiant);
-    printf("\n============================================\n\n");
-}
-
-void jouerson(char* son)
-{
-    playSound(son);
-}
-

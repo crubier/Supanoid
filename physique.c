@@ -2,28 +2,7 @@
 
 void pause(void)
 {
-    int fini=0;
-    dessiner(fenetrepause);
-    paint(); 
-    while (fini<100) 
-    {
-        fini++;
-        getLastKeyPressed();
-        sleepAWhile(1000*DT);
-    }
-    fini=0;
-    while (!fini)
-    {
-        switch (getLastKeyPressed())
-        { 
-            case VK_Q:
-                fini=1;
-                break;
-        }
-        sleepAWhile( (long) 1000 * DT );
-
-    }
-    return ;
+	return;
 }
 
 void mouvement(PTROBJET objet)
@@ -35,7 +14,7 @@ void mouvement(PTROBJET objet)
 void mouvements(void)
 {
     PTRCELLULE pcellule;
-    pcellule=originelisteactifs;
+    pcellule=origineliste;
     while(pcellule!=NULL)
     {
         mouvement((*pcellule).element);
@@ -54,10 +33,14 @@ OBJET positionsuivante(OBJET objet)
  	return res;
 }
 
-void rebond(PTROBJET objeta, PTROBJET objetb)
+void rebond(PTRCELLULE pcellulea, PTRCELLULE pcelluleb)
 {
     
     COORD normale;
+    PTROBJET objeta;
+    PTROBJET objetb;
+    objeta=(*pcellulea).element;
+    objetb=(*pcelluleb).element;
     
     normale=normalecontact(*objeta,*objetb);
     
@@ -102,15 +85,18 @@ void rebond(PTROBJET objeta, PTROBJET objetb)
             ));
             
         (*objeta).solidite-=(*objetb).agressivite;
-        (*objetb).solidite-=(*objeta).agressivite;     
-        
+        (*objetb).solidite-=(*objeta).agressivite;       
        
     }     
   
 }
 
-void gravitation(PTROBJET objeta, PTROBJET objetb)
+void gravitation(PTRCELLULE pcellulea, PTRCELLULE pcelluleb)
 {
+    PTROBJET objeta;
+    PTROBJET objetb;
+    objeta=(*pcellulea).element;
+    objetb=(*pcelluleb).element;
     COORD posrel;
     float coef;
     COORD vitessea,vitesseb;
@@ -130,21 +116,83 @@ void gravitation(PTROBJET objeta, PTROBJET objetb)
   
 }
 
-void frottement(PTROBJET objet)
+void frottement(PTRCELLULE pcellule)
 {
-        (*objet).acceleration=somme((*objet).acceleration,multiplicationscalaire(positionsuivante(*objet).vitesse,-1*(*objet).frottement));
+    PTROBJET objet;
+    objet=(*pcellule).element;
+    (*objet).acceleration=somme((*objet).acceleration,multiplicationscalaire(positionsuivante(*objet).vitesse,-1*(*objet).frottement));
 }
 
-void disparition(PTRCELLULE pcellule)
+void degradation(PTRCELLULE pcellule)
 {
-    if((*(*pcellule).element).solidite<=0)deplacercellule(pcellule,&originelisteactifs,&originelisteinactifs);
+    if((*(*pcellule).element).solidite<=0)
+	{
+		(*(*pcellule).element).couche=0;
+	}
 }
 
 COORD normalecontact(OBJET objeta, OBJET objetb)
 {
  	COORD res;
     COORD dir;
-        
+
+	res=vecteur(0,0);
+    
+	if((objeta.forme==RAQUETTE && objetb.forme==CERCLE))
+    {
+        if(abs(produitscalaire(difference(positionsuivante(objeta).position, positionsuivante(objetb).position),vecteur(1,0)))<abs(produitscalaire(somme(objeta.dimensions,objetb.dimensions),vecteur(0.5,0))) && abs(produitscalaire(difference(positionsuivante(objeta).position, positionsuivante(objetb).position),vecteur(0,1)))<abs(produitscalaire(somme(objeta.dimensions,objetb.dimensions),vecteur(0,0.5))))
+        {
+            dir=inverse(somme(objeta.dimensions,objetb.dimensions));
+            
+            res=arrondi(multiplicationscalaire(normalisation(multiplication(difference(objeta.position, objetb.position),dir)),sqrt(0.5)));
+
+            res=normalisation(res);
+
+			res=somme(res,multiplicationscalaire(vecteur(1/objeta.dimensions.x,0),produitscalaire(vecteur(1,0),difference(objeta.position,objetb.position))));
+        }
+        else
+        {
+            res=vecteur(0,0);
+        }
+	 	return res;
+    }
+
+	if((objetb.forme==RAQUETTE && objeta.forme==CERCLE))
+    {
+        if(abs(produitscalaire(difference(positionsuivante(objeta).position, positionsuivante(objetb).position),vecteur(1,0)))<abs(produitscalaire(somme(objeta.dimensions,objetb.dimensions),vecteur(0.5,0))) && abs(produitscalaire(difference(positionsuivante(objeta).position, positionsuivante(objetb).position),vecteur(0,1)))<abs(produitscalaire(somme(objeta.dimensions,objetb.dimensions),vecteur(0,0.5))))
+        {
+            dir=inverse(somme(objeta.dimensions,objetb.dimensions));
+            
+            res=arrondi(multiplicationscalaire(normalisation(multiplication(difference(objeta.position, objetb.position),dir)),sqrt(0.5)));
+
+            res=normalisation(res);
+
+			res=somme(res,multiplicationscalaire(vecteur(-1/objetb.dimensions.x,0),produitscalaire(vecteur(1,0),difference(objeta.position,objetb.position))));
+        }
+        else
+        {
+            res=vecteur(0,0);
+        }
+	 	return res;
+    }
+
+	if((objeta.forme==RAQUETTE && objetb.forme==RECTANGLE)||(objeta.forme==RECTANGLE && objetb.forme==RAQUETTE))
+    {
+        if(abs(produitscalaire(difference(positionsuivante(objeta).position, positionsuivante(objetb).position),vecteur(1,0)))<abs(produitscalaire(somme(objeta.dimensions,objetb.dimensions),vecteur(0.5,0))) && abs(produitscalaire(difference(positionsuivante(objeta).position, positionsuivante(objetb).position),vecteur(0,1)))<abs(produitscalaire(somme(objeta.dimensions,objetb.dimensions),vecteur(0,0.5))))
+        {
+            dir=inverse(somme(objeta.dimensions,objetb.dimensions));
+            
+            res=arrondi(multiplicationscalaire(normalisation(multiplication(difference(objeta.position, objetb.position),dir)),sqrt(0.5)));
+
+            res=normalisation(res);
+        }
+        else
+        {
+            res=vecteur(0,0);
+        }
+	 	return res;
+    }
+ 
     if(objeta.forme==RECTANGLE || objetb.forme==RECTANGLE)
     {
 
@@ -161,8 +209,10 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
         {
             res=vecteur(0,0);
         }
+ 		return res;
     }
-    else
+
+    if(objeta.forme==CERCLE || objetb.forme==CERCLE)
     {
         if(sqrt(8.)*distance(positionsuivante(objeta).position,positionsuivante(objetb).position)<(norme(objeta.dimensions)+norme(objetb.dimensions)))
         {
@@ -174,9 +224,13 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
         {
             res=vecteur(0,0);
         }
+	 	return res;
     }
-    if(norme(res)!=0)
-    {printf("Normale : ");indiquer(res);printf(" Norme : %g \n",norme(res));}
+
+
+
+   /* if(norme(res)!=0)
+    {printf("Normale : ");indiquer(res);printf(" Norme : %g \n",norme(res));}*/
     
  	return res;
 }
@@ -194,19 +248,25 @@ void interactions(void)
     PTRCELLULE pcellulea;
     PTRCELLULE pcelluleb;
     
-    
-    pcellulea=originelisteactifs;
+    pcellulea=premierecellule();
     while(pcellulea!=NULL)
     {
         pcelluleb=(*pcellulea).suivant;
         while(pcelluleb!=NULL)
         {
-            gravitation((*pcellulea).element,(*pcelluleb).element);
-            rebond((*pcellulea).element,(*pcelluleb).element);
+            if( ((int)(*(*pcellulea).element).couche & (int)(*(*pcelluleb).element).couche) != 0)  //Comparaison des couches
+            {
+                gravitation(pcellulea,pcelluleb);
+                rebond(pcellulea,pcelluleb);
+            }
             pcelluleb=(*pcelluleb).suivant;
         }
-        frottement((*pcellulea).element);
-        disparition(pcellulea);
+        
+        if( (*(*pcellulea).element).couche !=0 ) // La couche 0 est inactive
+        {
+            frottement(pcellulea);
+            degradation(pcellulea);
+        }
         
         pcellulea=(*pcellulea).suivant;
     }

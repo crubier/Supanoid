@@ -14,7 +14,6 @@ static jclass panel_cls;
 static jclass color_cls;
 static jclass imageIcon_cls;
 static jclass font_cls;
-
 static jobject panel;
 static jobject frame;
 
@@ -105,7 +104,6 @@ void start(int width, int height)
     manageException();
     exit(-4);
   }
-
 
   // Création de la Frame
   frame = (*env)->NewObject(env, frame_cls, frame_constructor_method, width, height);
