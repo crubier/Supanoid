@@ -18,6 +18,17 @@ typedef enum {INCONNUE, RECTANGLE, CERCLE, RAQUETTE} FORME;
 // Les differentes couleurs d'un objet (en français) sont dans le type COULEUR
 typedef enum { BLANC, NOIR, ROUGE, BLEU, VERT, JAUNE, CYANFR, GRIS, MAGENTAFR, ORANGEFR, ROSE } COULEUR;
 
+// Les differents modes de fonctionnement sont dans le type MODE
+typedef enum { NORMAL, DEBUG, SANSECHEC, PASAPAS } MODE;
+
+// La structure CHAINELISTE pour creer des listes chainees de chaines de caracteres
+typedef struct chainelistestruct
+{
+		char* nom;
+ 		char* chaine;							// la chaine dans la table
+		struct coordstruct* suivant;			// la cellule suivante
+} CHAINELISTE, *PTRCHAINELISTE;
+
 // La structure COORD permet de representer les vecteurs en 2D : un doublet de reels
 typedef struct coordstruct
 {
@@ -292,6 +303,38 @@ PTRIDENTIFIANT nouvelidentifiant(void);
 void supprimeridentifiant(PTRIDENTIFIANT pidentifiant);
 
 
+// Manipulation du TDA CHAINELISTE
+
+PTRCHAINELISTE creerchaineliste
+(
+	char* nom,
+	char* chaine,
+	PTRCHAINELISTE suivant
+);
+void lierchaineliste(PTRCHAINELISTE originechaineliste,PTRCHAINELISTE element);
+PTRCHAINELISTE longueurchaineliste(PTRCHAINELISTE originechaineliste);
+PTRCHAINELISTE chainelisteelementnumero(PTRCHAINELISTE originechaineliste, int i);
+PTRCHAINELISTE chainelistepremierelement(PTRCHAINELISTE originechaineliste);
+PTRCHAINELISTE chainelistedernierelement(PTRCHAINELISTE originechaineliste);
+PTRCHAINELISTE nouvellechaineliste(void);
+void supprimerchaineliste(PTRCHAINELISTE pchaineliste);
+
+// creation a partir de ses proprietes
+PTRCHAINELISTE creerchaineliste
+(
+	char* chaine,
+	PTRCHAINELISTE suivant
+);
+
+// creation par defaut
+PTRCHAINELISTE nouvellechaineliste(void);
+
+PTRCHAINELISTE longueurchaineliste(PTRCHAINELISTE originechaineliste);
+PTRCHAINELISTE chainelisteelementnumero(PTRCHAINELISTE originechaineliste, int i);
+
+// suppression
+void supprimerchaineliste(PTRCHAINELISTE pchaineliste);
+
 // MANIPULATION DU TDA CELLULE
 
 // creation a partir de ses proprietes
@@ -367,6 +410,8 @@ int compareridentifiantstypenomnumero(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIAN
 
 // creation d'une chaine de caractere de longueur appropriee a la chaine
 char* creerchaine(char* chaine);
+void supprimerchaine(char* chaine);
+char* modifierchaine(char* anciennechaine,char* nouvellechaine);
 
 // transformation d'un entier en chaine et inversement
 int lireint(char* chaine);
@@ -461,11 +506,17 @@ void interactions(void);
 /* l'execution, l'appel à des sous commandes etc...      */
 /*=======================================================*/
 
+// transformer un fichier en chaine de caracteres formatee
+char* fichier2chaine(FILE* fichier)
+
+// calculer la longueur d'un fichier
+int longueurfichier(FILE* fichier)
+
 // classer les parametres d'une ligne de commande brute dans une table
 char* lireligne(char* lignecommande);
 
 // executer les sous commandes de arguments d'une commande
-void executerargument(char* arguments, char* argumentsfichierparent, int a, int b);
+void executerargument(PTRCHAINELISTE arguments, PTRCHAINELISTE argumentsfichierparent, int a, int b);
 
 // executer les commandes comprises dans un fichier
 char* executerfichier(char* parametres);

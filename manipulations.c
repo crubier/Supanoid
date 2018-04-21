@@ -178,6 +178,88 @@ void supprimeridentifiant(PTRIDENTIFIANT pidentifiant)
 	free(pidentifiant);
 }
 
+
+// Manipulation du TDA CHAINELISTE
+
+PTRCHAINELISTE creerchaineliste
+(
+	char* nom,
+	char* chaine,
+	PTRCHAINELISTE suivant
+)
+{
+	PTRCHAINELISTE pchaineliste;
+	pchaineliste=malloc(sizeof(CHAINELISTE));
+	(*pchaineliste).nom=creerchaine(VIDE);
+	(*pchaineliste).chaine=creerchaine(VIDE);
+	(*pchaineliste).suivant=suivant;
+	return pchaineliste;
+}
+
+void lierchaineliste(PTRCHAINELISTE originechaineliste,	PTRCHAINELISTE element)
+{
+	(*chainelistedernierelement(originechaineliste)).suivant=element;
+}
+
+PTRCHAINELISTE longueurchaineliste(PTRCHAINELISTE originechaineliste)
+{
+	PTRCHAINELISTE pchaineliste;
+	int i;
+	i=0;
+	if(pchaineliste==NULL)return 0;
+	while((*pchaineliste).suivant!=NULL)
+	{
+		i++;
+		pchaineliste=(*pchaineliste).suivant;
+	}
+	return i;
+}
+
+PTRCHAINELISTE chainelisteelementnumero(PTRCHAINELISTE originechaineliste, int i)
+{
+	PTRCHAINELISTE pchaineliste;
+	int j;
+	if(pchaineliste==NULL)return NULL;
+	for(j=0;j<i;j++)
+	{
+		if((*pchaineliste).suivant!=NULL)
+		{
+			pchaineliste=(*pchaineliste).suivant;
+		}
+		if(pchaineliste==NULL) return NULL;
+	}
+	return pchaineliste;
+}
+
+PTRCHAINELISTE chainelistepremierelement(PTRCHAINELISTE originechaineliste)
+{
+	return chainelisteelementnumero(originechaineliste,0);
+}
+
+PTRCHAINELISTE chainelistedernierelement(PTRCHAINELISTE originechaineliste)
+{
+	return chainelisteelementnumero(originechaineliste,longueurchaineliste(originechaineliste));
+}
+
+PTRCHAINELISTE nouvellechaineliste(void)
+{
+	return creerchaineliste
+	(
+		VIDE,
+		VIDE,
+		NULL
+	);
+}
+
+void supprimerchaineliste(PTRCHAINELISTE pchaineliste)
+{
+    if(pchaineliste==NULL)return;
+	supprimerchaineliste((*pchaineliste).suivant);
+	free((*pchaineliste).nom);
+	free((*pchaineliste).chaine);
+	free(pchaineliste);
+}
+
 // Manipulation du TDA CELLULE
 
 PTRCELLULE creercellule
@@ -311,6 +393,8 @@ void verifierpointeur(char* p)
         exit (1);
     }
 }
+
+
 
 
 // fonctions de recherche et reperage
@@ -604,6 +688,17 @@ char* creerchaine(char* chaine)
     res=malloc((strlen(chaine)+2)*sizeof(char));
     strcpy(res,chaine);
     return res;
+}
+
+void supprimerchaine(char* chaine)
+{
+    free(chaine);
+}
+
+char* modifierchaine(char* anciennechaine,char* nouvellechaine)
+{
+    supprimerchaine(anciennechaine);
+	return(creerchaine(nouvellechaine));
 }
 
 // lecture et ecriture des differents types de donnes a partir de chaines
