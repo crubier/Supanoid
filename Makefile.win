@@ -1,0 +1,27 @@
+CC=mingw32-gcc
+DEL=rm
+
+CCOPTS=-g -Wall
+
+PLATFORM=win32
+
+JNI_INCL=-Iinclude -Iinclude\\${PLATFORM}
+
+JVM_LIB=lib\\win32\\libjvm.a
+
+supanoid.exe: main.o list.o graphic.o ${JVM_LIB}
+	${CC} main.o list.o graphic.o ${CCOPTS} ${JVM_LIB} -o supanoid
+
+list.o: list.h main.h list.c
+	${CC} ${CCOPTS} -c list.c -o list.o
+
+main.o:	main.c main.h
+	${CC} ${CCOPTS} -c main.c -o main.o
+
+graphic.o: graphic.c graphic.h key.h
+	${CC} ${CCOPTS} ${JNI_INCL} -c graphic.c -o graphic.o
+
+clean:
+	${DEL} *.exe 
+	${DEL} *.o
+
