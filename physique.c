@@ -53,6 +53,10 @@ void rebond(PTRCELLULE pcellulea, PTRCELLULE pcelluleb)
  	{
         float coef;
 
+		char temp[LONGCHAINE];
+		sprintf(temp,"evenements/collision[%s,%s];",ecrireIDENTIFIANT(*(*pcellulea).identifiant),ecrireIDENTIFIANT(*(*pcelluleb).identifiant));
+		executercommande(temp,VIDE);
+
                    //Voir le fichier maths.nb
         coef=((*objeta).rebondissement*(*objetb).rebondissement)/(((*objeta).masse+(*objetb).masse)*norme(normale)*norme(normale));      
   
@@ -90,7 +94,12 @@ void rebond(PTRCELLULE pcellulea, PTRCELLULE pcelluleb)
             ));
             
         (*objeta).solidite-=(*objetb).agressivite;
-        (*objetb).solidite-=(*objeta).agressivite;       
+        (*objetb).solidite-=(*objeta).agressivite; 
+	
+		if(norme(normalecontact(*objeta,*objetb))!=0)
+		{
+			supprimercellule(pcelluleb);
+		}      
        
     }     
   
@@ -133,7 +142,10 @@ void degradation(PTRCELLULE pcellule)
     if((*(*pcellule).element).solidite<=0)
 	{
 		(*(*pcellule).element).couche=0;
-		executercommande("jouerson[mort];",VIDE);
+		char temp[LONGCHAINE];
+		sprintf(temp,"evenements/mort[%s];",ecrireIDENTIFIANT(*(*pcellule).identifiant));
+		executercommande(temp,VIDE);
+
 	}
 }
 
@@ -143,7 +155,12 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
     COORD dir;
 
 	res=vecteur(0,0);
-    
+
+	if((objeta.couche & objetb.couche) == 0)
+	{
+		return res;
+	}
+
 	if((objeta.forme==RAQUETTE && objetb.forme==CERCLE))
     {
         if(abs(produitscalaire(difference(positionsuivante(objeta).position, positionsuivante(objetb).position),vecteur(1,0)))<abs(produitscalaire(somme(objeta.dimensions,objetb.dimensions),vecteur(0.5,0))) && abs(produitscalaire(difference(positionsuivante(objeta).position, positionsuivante(objetb).position),vecteur(0,1)))<abs(produitscalaire(somme(objeta.dimensions,objetb.dimensions),vecteur(0,0.5))))
@@ -158,7 +175,6 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
         
             res=normalisation(res);
 
-			executercommande("jouerson[rebond1];",VIDE);
 		}
         else
         {
@@ -181,7 +197,6 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
 
             res=normalisation(res);
 
-			executercommande("jouerson[rebond1];",VIDE);        
 		}
         else
         {
@@ -200,7 +215,6 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
 
             res=normalisation(res);
 
-			executercommande("jouerson[rebond1];",VIDE);     
         }
         else
         {
@@ -220,7 +234,6 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
 
             res=normalisation(res);
 
-			executercommande("jouerson[rebond2];",VIDE);     
         }
         else
         {
@@ -237,7 +250,6 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
           
             res=normalisation(res);
 
-			executercommande("jouerson[rebond2];",VIDE);     
         }
         else
         {

@@ -1,7 +1,7 @@
 [Project]
 FileName=Projet.dev
 Name=Supanoid
-UnitCount=10
+UnitCount=11
 Type=1
 Ver=1
 ObjFiles=
@@ -51,9 +51,9 @@ BuildCmd=
 
 [VersionInfo]
 Major=0
-Minor=0
-Release=9
-Build=114
+Minor=1
+Release=0
+Build=157
 LanguageID=1036
 CharsetID=1252
 CompanyName=LECRUBIER OLIVIER
@@ -64,7 +64,7 @@ LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=0.9
+ProductVersion=1.0
 AutoIncBuildNr=1
 
 [Unit6]
@@ -78,7 +78,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit11]
-FileName=listes.c
+FileName=commandes.c
 CompileCpp=0
 Folder=
 Compile=1

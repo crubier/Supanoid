@@ -522,6 +522,7 @@ char* creerchaine(char* chaine)
 int lireint(char* chaine)
 {
 	int res;
+	res=0;
 	sscanf(chaine,"%d",&res);
 	return res;
 }
@@ -529,6 +530,7 @@ int lireint(char* chaine)
 char* ecrireint(int a)
 {
 	char res[LONGCHAINE];
+	strcpy(res,"0");
 	sprintf(res,"%d",a);	
 	return creerchaine(res);
 }
@@ -536,6 +538,7 @@ char* ecrireint(int a)
 float lirefloat(char* chaine)
 {
 	float res;
+	res=0;
 	sscanf(chaine,"%f",&res);
 	return res;
 }
@@ -543,6 +546,7 @@ float lirefloat(char* chaine)
 char* ecrirefloat(float a)
 {
 	char res[LONGCHAINE];
+	strcpy(res,"0");
 	sprintf(res,"%g",a);	
 	return creerchaine(res);
 }
@@ -550,6 +554,8 @@ char* ecrirefloat(float a)
 COORD lireCOORD(char* chaine)
 {
 	COORD res;
+	res.x=0;
+	res.y=0;
 	sscanf(chaine,"(%f:%f)",&(res.x),&(res.y));
 	return res;
 }
@@ -557,6 +563,7 @@ COORD lireCOORD(char* chaine)
 char* ecrireCOORD(COORD a)
 {
 	char res[LONGCHAINE];
+	strcpy(res,"(0:0)");
 	sprintf(res,"(%g:%g)",a.x,a.y);	
 	return creerchaine(res);
 }
@@ -572,10 +579,10 @@ FORME lireFORME(char* chaine)
 char* ecrireFORME(FORME a)
 {
 	char res[LONGCHAINE];
-	sprintf(res,"INCONNUE");
-    if(a==CERCLE)sprintf(res,"CERCLE");
-    if(a==RECTANGLE)sprintf(res,"RECTANGLE");
-    if(a==RAQUETTE)sprintf(res,"RAQUETTE");
+	strcpy(res,"INCONNUE");
+    if(a==CERCLE)strcpy(res,"CERCLE");
+    if(a==RECTANGLE)strcpy(res,"RECTANGLE");
+    if(a==RAQUETTE)strcpy(res,"RAQUETTE");
     return creerchaine(res);
 }
 
@@ -598,18 +605,18 @@ COULEUR lireCOULEUR(char* chaine)
 char* ecrireCOULEUR(COULEUR a)
 {
 	char res[LONGCHAINE];
-	sprintf(res,"NOIR");
-    if(a==BLANC)sprintf(res,"BLANC");
-    if(a==NOIR)sprintf(res,"NOIR");
-    if(a==ROUGE)sprintf(res,"ROUGE");
-    if(a==BLEU)sprintf(res,"BLEU");
-    if(a==VERT)sprintf(res,"VERT");
-    if(a==JAUNE)sprintf(res,"JAUNE");
-    if(a==CYAN)sprintf(res,"CYAN");
-    if(a==GRIS)sprintf(res,"GRIS");
-    if(a==MAGENTA)sprintf(res,"MAGENTA");
-    if(a==ORANGE)sprintf(res,"ORANGE");
-    if(a==ROSE)sprintf(res,"ROSE");
+	strcpy(res,"NOIR");
+    if(a==BLANC)strcpy(res,"BLANC");
+    if(a==NOIR)strcpy(res,"NOIR");
+    if(a==ROUGE)strcpy(res,"ROUGE");
+    if(a==BLEU)strcpy(res,"BLEU");
+    if(a==VERT)strcpy(res,"VERT");
+    if(a==JAUNE)strcpy(res,"JAUNE");
+    if(a==CYAN)strcpy(res,"CYAN");
+    if(a==GRIS)strcpy(res,"GRIS");
+    if(a==MAGENTA)strcpy(res,"MAGENTA");
+    if(a==ORANGE)strcpy(res,"ORANGE");
+    if(a==ROSE)strcpy(res,"ROSE");
     return creerchaine(res);
 }
 
@@ -622,6 +629,9 @@ IDENTIFIANT lireIDENTIFIANT(char* chaine)
 	char* temp;
 
 	temp=creerchaine(chaine);
+	strcpy(type,VIDE);
+	strcpy(nom,VIDE);
+	numero=0;
 
 	if(sscanf(temp,"( %[^:]s : %[^:]s : %d )",type,nom,&numero)!=EOF)
 	{
@@ -631,14 +641,16 @@ IDENTIFIANT lireIDENTIFIANT(char* chaine)
 		sscanf(temp," %[^:]s ",nom);
 		temp=strstr(temp,":")+sizeof(char);
 		sscanf(temp," %d )",&numero);
-		pres=creeridentifiant(type,nom,numero);
+
 	}
+	pres=creeridentifiant(type,nom,numero);
 	return *pres;
 }
 
 char* ecrireIDENTIFIANT(IDENTIFIANT a)
 {
 	char res[LONGCHAINE];
+	strcpy(res,VIDE);
 	sprintf(res,"(%s:%s:%d)",a.type,a.nom,a.numero);
 	return creerchaine(res); 
 }
@@ -713,438 +725,6 @@ PTRCELLULE lireOBJET(char* chaine)
 ///////////////////
 
 
-char* lireligne(char* lignecommande)
-{
-    char* arguments;
-    char* ligne;
-	char* debut;
-	char* vraidebut;
-	char* fin;
-	char* vraifin;
-	char* temp;
-	int i,imax,nbcrochets;
-	BOOLEAN fini;
-
-	i=0;
-	imax =NBPARAM;
-	ligne=creerchaine(lignecommande);
-	arguments=malloc(LONGCHAINE*NBPARAM*sizeof(char));
-	fini=FALSE;
-	
-	temp=lignecommande;
-	nbcrochets=0;
-	while(*temp!=';' && *temp!='\0' && *temp!='\n')
-	{
-			if(*temp=='[')nbcrochets++;
-			if(*temp==']')nbcrochets--;			
-			temp+=sizeof(char);
-	}
-	if(nbcrochets!=0)return NULL;
-
-//Initialisation
-	for(debut=arguments;debut<(arguments+LONGCHAINE*NBPARAM*sizeof(char));debut+=sizeof(char))
-	{
-		*debut='\0';
-	}
-
-	if(strstr(ligne,";")!=NULL)(*strstr(ligne,";"))='\0';
-	if(strstr(ligne,"\n")!=NULL)(*strstr(ligne,"\n"))='\0';
-	if(strlen(ligne)<1)return arguments;
-	if(strstr(ligne,"[")==NULL || strstr(ligne,"]")==NULL) return arguments;
-
-
-//Placement nom commande
-
-	debut=ligne;
-	vraidebut=debut;
-	while(*debut==' ')debut+=sizeof(char);
-	fin=debut;
-	while(*fin!='[')fin+=sizeof(char);
-	fin-=sizeof(char);
-	vraifin=fin;
-	if(fin<debut)return arguments;
-	while(*fin==' ')fin-=sizeof(char);
-	fin+=sizeof(char);
-	for(temp=debut;temp!=fin;temp+=sizeof(char))
-	{
-		*(arguments+(temp-debut))=*temp;
-	}
-
-//Placement arguments
-	while(fini==FALSE)
-	{
-		i++;
-		debut=vraifin+2*sizeof(char);
-		vraidebut=debut;
-		while(*debut==' ')debut+=sizeof(char);
-		fin=debut;
-		nbcrochets=0;
-		while( (*fin!=','|| nbcrochets!=0) && (*fin!=']' || nbcrochets!=0))
-		{
-			if(*fin=='[')nbcrochets++;
-			if(*fin==']')nbcrochets--;			
-			fin+=sizeof(char);
-		}
-		if(*fin==']')fini=TRUE;
-		fin-=sizeof(char);
-		vraifin=fin;
-		if(fin<debut)break;
-		while(*fin==' ')fin-=sizeof(char);
-		fin+=sizeof(char);
-		for(temp=debut;temp!=fin;temp+=sizeof(char))
-		{
-			*(arguments+i*LONGCHAINE*sizeof(char)+(temp-debut))=*temp;
-		}
-	}
-
-	imax=i+1;
-
-//Affichage
-	printf("%s[",arguments);
-	for(i=1;i<imax-1;i++)
-	{
-		ligne=arguments+LONGCHAINE*i*sizeof(char);
-		printf("%s,",ligne);
-
-	}
-	ligne=arguments+LONGCHAINE*i*sizeof(char);
-	printf("%s];\n",ligne);
-
-//Retour
-
-	return(arguments);
-
-}
-
-
-char* executercommande(char* lignecommande,char* argumentsfichierparent)
-{
-	char* parametres;
-	char nomfichier[LONGCHAINE];
-	char res[LONGCHAINE];
-	int i;
-
-	strcpy(res,VIDE);
-
-	parametres=lireligne(lignecommande);
-
-	if(parametres==NULL)return;
-
-
-
-	for(i=1;i<NBPARAM;i++)
-	{
-		if(strstr(parametres + i*LONGCHAINE*sizeof(char),"[")!=NULL && strstr(parametres + i*LONGCHAINE*sizeof(char),"]")!=NULL)
-		{
-			//printf("Sous commande : %s\n",parametres + i*LONGCHAINE*sizeof(char));
-			strncpy(parametres + i*LONGCHAINE*sizeof(char),executercommande(parametres + i*LONGCHAINE*sizeof(char),argumentsfichierparent),LONGCHAINE);
-		}
-	}	 
-
-// Passage de parametres
-
-	if(strcmp(parametres,"argument")==0)
-	{
-		return creerchaine(argumentsfichierparent + lireint(parametres + 1*LONGCHAINE*sizeof(char))*LONGCHAINE*sizeof(char));
-	}
-
-// Actions
-
-	if(strcmp(parametres,"creerobjet")==0)
-	{
-		action_creerobjet(parametres);
-		return creerchaine(res);
-	}
-
-	if(strcmp(parametres,"supprimerobjet")==0)
-	{
-		action_supprimerobjet(parametres);
-		return creerchaine(res);
-	}
-
-	if(strcmp(parametres,"modifierpropriete")==0)
-	{
-		action_modifierpropriete(parametres);
-		return creerchaine(res);
-	}
-
-	if(strcmp(parametres,"afficherpropriete")==0)
-	{
-//		fprintf(journal,"afficher propriete <%s> de <%s> : <%s>\n",parametres+2*LONGCHAINE*sizeof(char),parametres+1*LONGCHAINE*sizeof(char),afficherpropriete(lireOBJET(parametres+1*LONGCHAINE*sizeof(char)),parametres+2*LONGCHAINE*sizeof(char)));
-		return afficherpropriete(lireOBJET(parametres+1*LONGCHAINE*sizeof(char)),parametres+2*LONGCHAINE*sizeof(char));
-	}
-
-	if(strcmp(parametres,"modifierparametre")==0)
-	{
-		action_modifierparametre(parametres);
-		return creerchaine(res);
-	}
-
-	if(strcmp(parametres,"afficherparametre")==0)
-	{
-		return afficherparametre(parametres);
-	}
-
-	if(strcmp(parametres,"jouerson")==0)
-	{
-		action_jouerson(parametres);
-		return creerchaine(res);
-	}
-	
-	if(strcmp(parametres,"initialiser")==0)
-	{
-		action_initialiser(parametres);
-		return creerchaine(res);
-	}
-
-	if(strcmp(parametres,"affichernoms")==0)
-	{
-		action_affichernoms(parametres);
-		return creerchaine(res);
-	}
-
-	if(strcmp(parametres,"cachernoms")==0)
-	{
-		action_cachernoms(parametres);
-		return creerchaine(res);
-	}
-	
-	if(strcmp(parametres,"executer")==0)
-	{
-		action_executer(parametres);
-		return creerchaine(res);
-	}
-
-	if(strcmp(parametres,"ecrire")==0)
-	{
-		action_ecrire(parametres);
-		return creerchaine(res);
-	}
-
-//Reperage
-
-	if(strcmp(parametres,"dernierobjet")==0)
-	{
-		return ecrireIDENTIFIANT(*(*dernierecellule()).identifiant);
-	}
-
-	if(strcmp(parametres,"premierobjet")==0)
-	{
-		return ecrireIDENTIFIANT(*(*premierecellule()).identifiant);
-	}
-
-	if(strcmp(parametres,"dernierobjettype")==0)
-	{
-		IDENTIFIANT identifiant;
-		identifiant = lireIDENTIFIANT(parametres + 1*LONGCHAINE*sizeof(char));
-		return ecrireIDENTIFIANT(*(*recherchertype(&identifiant,dernierecellule(),-1)).identifiant);
-	}
-
-	if(strcmp(parametres,"premierobjettype")==0)
-	{
-		IDENTIFIANT identifiant;
-		identifiant = lireIDENTIFIANT(parametres + 1*LONGCHAINE*sizeof(char));
-		return ecrireIDENTIFIANT(*(*recherchertype(&identifiant,premierecellule(),1)).identifiant);
-	}
-
-	if(strcmp(parametres,"dernierobjettypenom")==0)
-	{
-		IDENTIFIANT identifiant;
-		identifiant = lireIDENTIFIANT(parametres + 1*LONGCHAINE*sizeof(char));
-		return ecrireIDENTIFIANT(*(*recherchertypenom(&identifiant,dernierecellule(),-1)).identifiant);
-	}
-
-	if(strcmp(parametres,"premierobjettypenom")==0)
-	{
-		IDENTIFIANT identifiant;
-		identifiant = lireIDENTIFIANT(parametres + 1*LONGCHAINE*sizeof(char));
-		return ecrireIDENTIFIANT(*(*recherchertypenom(&identifiant,premierecellule(),1)).identifiant);
-	}
-
-	if(strcmp(parametres,"prochainobjet")==0)
-	{
-		IDENTIFIANT identifiant;
-		identifiant=lireIDENTIFIANT(parametres + 1*LONGCHAINE*sizeof(char));
-		return ecrireIDENTIFIANT(*prochainidentifiant(&identifiant));
-	}
-
-	if(strcmp(parametres,"objetnumero")==0)
-	{
-		return ecrireIDENTIFIANT(*(*cellulenumero(lireint(parametres + 1*LONGCHAINE*sizeof(char)))).identifiant);
-	}
-
-	if(strcmp(parametres,"nombreobjets")==0)
-	{
-		return ecrireint(nombrecellules());
-	}
-
-// identifiants
-
-	if(strcmp(parametres,"identifiant_type")==0)
-	{
-		return creerchaine((*(*lireOBJET(parametres + 1*LONGCHAINE*sizeof(char))).identifiant).type);
-	}
-
-	if(strcmp(parametres,"identifiant_nom")==0)
-	{
-		return creerchaine((*(*lireOBJET(parametres + 1*LONGCHAINE*sizeof(char))).identifiant).nom);
-	}
-
-	if(strcmp(parametres,"identifiant_numero")==0)
-	{
-		return ecrireint((*(*lireOBJET(parametres + 1*LONGCHAINE*sizeof(char))).identifiant).numero);
-	}
-
-// Operations mathematiques
-
-	if(strcmp(parametres,"vecteur_somme")==0)
-	{
-		return ecrireCOORD(somme(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char)),lireCOORD(parametres + 2*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"vecteur_difference")==0)
-	{
-		return ecrireCOORD(difference(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char)),lireCOORD(parametres + 2*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"vecteur_oppose")==0)
-	{
-		return ecrireCOORD(oppose(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"vecteur_produitscalaire")==0)
-	{
-		return ecrirefloat(produitscalaire(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char)),lireCOORD(parametres + 2*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"vecteur_multiplicationscalaire")==0)
-	{
-		return ecrireCOORD(multiplicationscalaire(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char)),lirefloat(parametres + 2*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"vecteur_multiplication")==0)
-	{
-		return ecrireCOORD(multiplication(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char)),lireCOORD(parametres + 2*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"vecteur_inverse")==0)
-	{
-		return ecrireCOORD(multiplication(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char)),lireCOORD(parametres + 2*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"vecteur_normalisation")==0)
-	{
-		return ecrireCOORD(normalisation(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"vecteur_distance")==0)
-	{
-		return ecrirefloat(distance(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char)),lireCOORD(parametres + 2*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"vecteur_norme")==0)
-	{
-		return ecrirefloat(norme(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"vecteur_total")==0)
-	{
-		return ecrirefloat(total(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"reel_somme")==0)
-	{
-		return ecrirefloat(lirefloat(parametres + 1*LONGCHAINE*sizeof(char))+lirefloat(parametres + 2*LONGCHAINE*sizeof(char)));
-	}
-
-	if(strcmp(parametres,"reel_difference")==0)
-	{
-		return ecrirefloat(lirefloat(parametres + 1*LONGCHAINE*sizeof(char))-lirefloat(parametres + 2*LONGCHAINE*sizeof(char)));
-	}
-
-	if(strcmp(parametres,"reel_oppose")==0)
-	{
-		return ecrirefloat(-lirefloat(parametres + 1*LONGCHAINE*sizeof(char)));
-	}
-
-	if(strcmp(parametres,"reel_multiplication")==0)
-	{
-		return ecrirefloat(lirefloat(parametres + 1*LONGCHAINE*sizeof(char))*lirefloat(parametres + 2*LONGCHAINE*sizeof(char)));
-	}
-
-	if(strcmp(parametres,"reel_inverse")==0)
-	{
-		return ecrirefloat(1/lirefloat(parametres + 1*LONGCHAINE*sizeof(char)));
-	}
-
-	if(strcmp(parametres,"reel_module")==0)
-	{
-		return ecrirefloat(fabs(lirefloat(parametres + 1*LONGCHAINE*sizeof(char))));
-	}
-
-	if(strcmp(parametres,"reel_exposant")==0)
-	{
-		return ecrirefloat(pow(lirefloat(parametres + 1*LONGCHAINE*sizeof(char)),lirefloat(parametres + 2*LONGCHAINE*sizeof(char))));
-	}
-
-//chaines
-
-	if(strcmp(parametres,"chaine_concatener")==0)
-	{
-		return creerchaine(strcat(parametres + 1*LONGCHAINE*sizeof(char),parametres + 2*LONGCHAINE*sizeof(char)));
-	}
-
-	if(strcmp(parametres,"si")==0)
-	{
-		if(strcmp(parametres + 1*LONGCHAINE*sizeof(char),parametres + 2*LONGCHAINE*sizeof(char))==0)
-		{
-			return creerchaine(parametres + 3*LONGCHAINE*sizeof(char));
-		}
-		else
-		{
-			return creerchaine(parametres + 4*LONGCHAINE*sizeof(char));			
-		}
-	}
-
-//recherche
-
-	if(strlen(parametres)>0)
-	{
-		return executerfichier(parametres);
-	}
-	return VIDE;	
-}
-
-
-char* executerfichier(char* parametres)
-{
-	FILE* fichier;
-	char lignecommande[LONGCHAINE];
-	char nomfichier[LONGCHAINE]; 
-	char* res=NULL;
-	char* temp=NULL;
-
-
-
-	sprintf(nomfichier,"mondes/%s/%s.supanoid",repertoire,parametres);
-	fprintf(journal,"Ouverture fichier %s\n",nomfichier);
-	fichier=fopen(nomfichier,"r");
-	if(fichier==NULL)
-	{
-		fprintf(journal,"Erreur\n");
-		return res;
-	}
-	do
-	{
-		strcpy(lignecommande,VIDE);
-		res=fgets(lignecommande,LONGCHAINE,fichier);
-
-		executercommande(lignecommande,parametres);
-
-	}while(res!=NULL);
-	fclose(fichier);	
-}
-
 
 void entrerpropriete(PTRCELLULE pcellule, char* propriete, char* valeur)
 {
@@ -1157,91 +737,76 @@ void entrerpropriete(PTRCELLULE pcellule, char* propriete, char* valeur)
     if(strcmp(propriete,"position")==0)
     {
         (*pobjet).position=lireCOORD(valeur);
-        return ;
     }
     
     if(strcmp(propriete,"vitesse")==0)
     {
         (*pobjet).vitesse=lireCOORD(valeur);
-        return ;
     }
     
     if(strcmp(propriete,"acceleration")==0)
     {
         (*pobjet).acceleration=lireCOORD(valeur);
-        return ;
     }
     
     if(strcmp(propriete,"couche")==0)
     {
         (*pobjet).couche=lireint(valeur);
-        return ;
     }
     
     if(strcmp(propriete,"forme")==0)
     {
         (*pobjet).forme=lireFORME(valeur);
-        return ;
     }
     
     if(strcmp(propriete,"dimensions")==0)
     {
         (*pobjet).dimensions=lireCOORD(valeur);
-        return ;
     }
        
     if(strcmp(propriete,"masse")==0)
     {
         (*pobjet).masse=lirefloat(valeur);
-        return ;
     }
     
     if(strcmp(propriete,"frottement")==0)
     {
         (*pobjet).frottement=lirefloat(valeur);
-        return ;
     }
     
     if(strcmp(propriete,"rebondissement")==0)
     {
         (*pobjet).rebondissement=lirefloat(valeur);
-        return ;
     }
     
     if(strcmp(propriete,"solidite")==0)
     {
         (*pobjet).solidite=lirefloat(valeur);
-        return ;
     }
     
     if(strcmp(propriete,"attraction")==0)
     {
         (*pobjet).attraction=lirefloat(valeur);
-        return ;
     }
     
     if(strcmp(propriete,"agressivite")==0)
     {
         (*pobjet).agressivite=lirefloat(valeur);
-        return ;
     }
       
     if(strcmp(propriete,"graphique")==0)
     {
         (*pobjet).graphique=creerchaine(valeur);
-        return ;
     }
      
   	if(strcmp(propriete,"texte")==0)
     {
         (*pobjet).texte=creerchaine(valeur);
-        return ;
     }
 
     if(strcmp(propriete,"couleur")==0)
     {
         (*pobjet).couleur=lireCOULEUR(valeur);
-        return ;
     }
         
     return ;
@@ -1344,25 +909,6 @@ char* afficherpropriete(PTRCELLULE pcellule, char* propriete)
     return ;
 }
 
-
-void demanderparametres()
-{
-	char nomjournal[LONGCHAINE];
-	printf("Monde ? ");
-	scanf("%s",repertoire);
-	printf("\n");
-	
-	sprintf(nomjournal,"mondes/%s/journal.supanoid",repertoire);
-	journal=fopen(nomjournal,"w+");
-
-	if(journal==NULL)
-	{
-		printf("Ouverture impossible de mondes/%s !\n",repertoire);
-		system("pause");
-		exit(3);
-	}
-	printf("Ouverture de mondes/%s !\n",repertoire);
-}
 
 char* afficherparametre(char* chaine)
 {

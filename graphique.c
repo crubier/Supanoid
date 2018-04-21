@@ -35,7 +35,6 @@ void clavier(void)
                 fini = 1;      
                 break;
 			case VK_A:
-			    executercommande("jouerson[wow];",VIDE);
 				executercommande("modifierparametre[focus,(fenetre:fenetre:1)];",VIDE);
 				(*(*fenetre).element).position=lireCOORD("(0:0)");
 				(*(*fenetre).element).vitesse=lireCOORD("(0:0)");
@@ -44,42 +43,32 @@ void clavier(void)
 			case VK_T:
 				if(recherchertypenom(creeridentifiant("trounoir","trounoir",0),premierecellule(),1)==NULL)
 			    executercommande("actions/creertrounoir[];",VIDE);
-			    executercommande("jouerson[wow];",VIDE);
 				break;
 			case VK_Y:
 			    executercommande("actions/tuertrounoir[];",VIDE);
-			    executercommande("jouerson[wow];",VIDE);
 				break;
             case VK_F1:
-			    executercommande("jouerson[wow];",VIDE);
                 decrireLISTEdetail();
                 break;
             case VK_F2:
-			    executercommande("jouerson[wow];",VIDE);
                 executercommande("initialiser[];",VIDE);
                 break;
             case VK_F3:
-			    executercommande("jouerson[wow];",VIDE);
                 DT*=2;
                 break;
             case VK_F4:
-			    executercommande("jouerson[wow];",VIDE);
                 DT/=2;
                 break;
 			case VK_F6:
-			    executercommande("jouerson[wow];",VIDE);
 				SENSIBILITE/=1.05;
 				break;
 			case VK_F7:
-			    executercommande("jouerson[wow];",VIDE);
 				SENSIBILITE*=1.05;
 				break;
 			case VK_F8:
-			    executercommande("jouerson[wow];",VIDE);
 				executercommande("affichernoms[255];",VIDE);
 				break;
 			case VK_F9:
-			    executercommande("jouerson[wow];",VIDE);
 				executercommande("cachernoms[255];",VIDE);
 				break;
             case VK_P:
@@ -87,20 +76,24 @@ void clavier(void)
                 break;
             case VK_ENTER:
                 scanf("%s",temp);
-				printf(" > %s\n",executercommande(temp,VIDE));
+				executercommande(temp,VIDE);
                 break;
             case VK_SPACE:
-			    executercommande("jouerson[wow];",VIDE);
-				executercommande("actions/balles/creerballes[vecteur_somme[afficherpropriete[(raquette:raquette:1),position],(0:40)]];",VIDE);
+				executercommande("actions/balles/creerballes[vecteur_somme[propriete[(raquette:raquette:1),position],(0:40)]];",VIDE);
                 break;
             case VK_X:
-			    executercommande("jouerson[wow];",VIDE);
 				executercommande("actions/balles/explosionballes[(0:0),(0:0)];",VIDE);
                 break;
             case VK_W:
-			    executercommande("jouerson[wow];",VIDE);
 				executercommande("modifierparametre[focus,(raquette:raquette:1)];",VIDE);
                 break;
+            case VK_B:
+				executercommande("actions/raquette/raquette+[];",VIDE);
+                break;
+            case VK_N:
+				executercommande("actions/raquette/raquette-[];",VIDE);
+                break;
+
         }
 }
 
@@ -112,7 +105,7 @@ void dessin(void)
 
 	setForegroundColor((*(*fenetre).element).couleur);
 	clearRect(0, 0, (*(*fenetre).element).dimensions.x,(*(*fenetre).element).dimensions.y);
-    for(i=1;i<=32;i*=2)
+    for(i=1;i<=COUCHES;i*=2)
     {
         while(pcellule!=NULL)
         {
@@ -209,8 +202,8 @@ void initialisation(void)
 {
 
 	fprintf(journal,"Initialisation ");
-    fenetre=recherchertype(creeridentifiant("fenetre","fenetre",0),premierecellule(),1);
-    raquette=recherchertype(creeridentifiant("raquette","raquette",0),premierecellule(),1);
+    fenetre=recherchertype(creeridentifiant("fenetre","fenetre",1),premierecellule(),1);
+    raquette=recherchertype(creeridentifiant("raquette","raquette",1),premierecellule(),1);
     focus=fenetre;
 	fprintf(journal,"fenetre : %s ",ecrireIDENTIFIANT(*(*fenetre).identifiant));
 

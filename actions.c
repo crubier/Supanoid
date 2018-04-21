@@ -1,11 +1,27 @@
 #include "supanoid.h"
 
-void action_jouerson(char* chaine)
+void action_jouer(char* chaine)
 {
 	char nomfichier[LONGCHAINE];
-	sprintf(nomfichier,"mondes/%s/sons/%s.wav",repertoire,chaine+1*LONGCHAINE*sizeof(char));
-	registerSound(nomfichier);
-    playSound(nomfichier);
+	if(strcmp(chaine+1*LONGCHAINE*sizeof(char),VIDE)==0 || strcmp(chaine+2*LONGCHAINE*sizeof(char),VIDE)==0)return;
+	if(strcmp(chaine+1*LONGCHAINE*sizeof(char),"son")==0)
+	{
+		sprintf(nomfichier,"mondes/%s/sons/%s.wav",repertoire,chaine+2*LONGCHAINE*sizeof(char));
+    	playSound(nomfichier);
+		return;
+	}
+}
+
+void action_charger(char* chaine)
+{
+	char nomfichier[LONGCHAINE];
+	if(strcmp(chaine+1*LONGCHAINE*sizeof(char),VIDE)==0 || strcmp(chaine+2*LONGCHAINE*sizeof(char),VIDE)==0)return;
+	if(strcmp(chaine+1*LONGCHAINE*sizeof(char),"son")==0)
+	{
+		sprintf(nomfichier,"mondes/%s/sons/%s.wav",repertoire,chaine+2*LONGCHAINE*sizeof(char));
+		registerSound(nomfichier);
+		return;
+	}
 }
 
 void action_creerobjet(char* chaine)
@@ -27,10 +43,14 @@ void action_modifierpropriete(char* chaine)
 
 void action_initialiser(char* chaine)
 {
-	cloture();
+    cloture();
+	cloturegraphique();
 	origineliste=NULL;
-	executerfichier("monde");
+    executerfichier("monde");
     initialisation();
+	initialisationgraphique();
+    executerfichier("initialisation");
+
 }
 
 void action_affichernoms(char* chaine)
@@ -86,6 +106,11 @@ void action_modifierparametre(char* chaine)
 	if(strcmp(chaine+1*LONGCHAINE*sizeof(char),"attraction")==0)
 	{
 		ATTRACTION=lirefloat(chaine+2*LONGCHAINE*sizeof(char));
+	}
+
+	if(strcmp(chaine+1*LONGCHAINE*sizeof(char),"mode")==0)
+	{
+		modefonctionnement=lireint(chaine+2*LONGCHAINE*sizeof(char));
 	}
 
 	if(strcmp(chaine+1*LONGCHAINE*sizeof(char),"focus")==0)

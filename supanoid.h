@@ -6,8 +6,10 @@
 
 #include "graphic.h"
 
-#define LONGCHAINE 256
-#define NBPARAM 32
+#define LONGCHAINE (256)
+#define NBPARAM (32)
+#define EPSILON (0.01)
+#define COUCHES (8)
 
 #define VIDE ""
 
@@ -71,9 +73,11 @@ char repertoire[LONGCHAINE];
 float DT;
 float SENSIBILITE;
 float ATTRACTION;
+int modefonctionnement;
 
 /*ACTIONS*/
-void action_jouerson(char* chaine);
+void action_jouer(char* chaine);
+void action_charger(char* chaine);
 void action_creerobjet(char* chaine);
 void action_supprimerobjet(char* chaine);
 void action_modifierpropriete(char* chaine);
@@ -176,7 +180,6 @@ int compareridentifiantstypenom(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIANT pide
 int compareridentifiantstypenomnumero(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIANT pidentifiantb);
 
 char* creerchaine(char* chaine);
-char* lireligne(char* lignecommande);
 
 int lireint(char* chaine);
 char* ecrireint(int a);
@@ -200,12 +203,10 @@ char* ecrireLISTE(void);
 PTRCELLULE lireOBJET(char* chaine);
 char* ecrireOBJET(OBJET a);
 
-char* executercommande(char* lignecommande,char* argumentsfichierparent);
-char* executerfichier(char* parametres);
 void entrerpropriete(PTRCELLULE pcellule, char* propriete, char* valeur);
 char* afficherpropriete(PTRCELLULE pcellule, char* propriete);
 char* afficherparametre(char* chaine);
-void demanderparametres();
+
 
 /*PHYSIQUE*/
 void pause(void);
@@ -219,3 +220,11 @@ void degradation(PTRCELLULE pcellule);
 COORD normalecontact(OBJET objeta, OBJET objetb);
 COORD positionrelative(OBJET objeta, OBJET objetb);
 void interactions(void);
+
+/*COMMANDES*/
+
+char* lireligne(char* lignecommande);
+void executerargument(char* arguments, char* argumentsfichierparent, int a, int b);
+char* executerfichier(char* parametres);
+char* executercommande(char* lignecommande,char* argumentsfichierparent);
+void demanderparametres(int argc, char *argv[]);

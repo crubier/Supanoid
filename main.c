@@ -1,17 +1,18 @@
 #include "supanoid.h"
 
-int main(void)
+int main(int argc, char *argv[])
 {
-		
+	
 	origineliste=NULL;														
 	raquette=NULL;
 	fenetre=NULL;
+	modefonctionnement=0;
 
-	demanderparametres();
+	demanderparametres(argc,argv);
     executerfichier("monde");
     initialisation();
 	initialisationgraphique();
-
+    executerfichier("initialisation");
     while (!fini) 
     {        
         clavier();
