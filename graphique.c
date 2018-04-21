@@ -8,10 +8,11 @@ void effacer(void)
 void dessin(void)
 {
     PTRCELLULE pcellule;
-    pcellule=origineliste;
+    pcellule=originelisteactifs;
     while(pcellule!=NULL)
     {
-        dessiner((*(*pcellule).element));        
+        dessiner((*(*pcellule).element));
+     
         pcellule=(*pcellule).suivant;
     }
 }
@@ -22,7 +23,7 @@ void dessiner(OBJET objet)
    	char nom[LONGUEURMAXCHAINE];
    	
     setForegroundColor(objet.couleur);
-    if(strcmp(objet.graphique,"AUCUN")!=0)/*si le fichier n'existe pas, rien ne sera affiché, les formes seront affichée sulement si graphique = AUCUN*/
+    if(strcmp(objet.graphique,"INCONNU")!=0)/*si le fichier n'existe pas, rien ne sera affiché, les formes seront affichée sulement si graphique = AUCUN*/
     {
         strcpy(nom,"images/");
         strcat(nom,objet.graphique);
@@ -51,7 +52,12 @@ void initialisationgraphiques(void)
     registerKeyPressed(VK_DOWN); 
     registerKeyPressed(VK_F1); 
     registerKeyPressed(VK_F2); 
-    
+    registerKeyPressed(VK_F3); 
+    registerKeyPressed(VK_F4); 
+    registerKeyPressed(VK_P);
+    registerKeyPressed(VK_Q);
+    registerSound("sons/b.wav");
+    DT=0.002;
 
     setBackgroundColor(fenetre.couleur);        
     clearRect(0, 0, (int)fenetre.dimensions.x, (int)fenetre.dimensions.y);      
@@ -59,31 +65,41 @@ void initialisationgraphiques(void)
 
 void indiquer(COORD a)
 {
-    printf("( %f , %f )\n",a.x,a.y);   
+    printf("( %g , %g )",a.x,a.y);   
 }
 
 void decrire(OBJET a)
 {
-    printf("\n==============================\n\n");
-    printf("Nom            : %s \n",a.nom);
-    printf("Identifiant    : %d\n",a.identifiant);
+    printf("\n============================================\n\n");
+    printf("Nom            = %s \n",a.nom);
+    printf("Identifiant    = %d\n",a.identifiant);
     printf("\n");
-    printf("Position       : ");indiquer(a.position);
-    printf("Vitesse        : ");indiquer(a.vitesse);
-    printf("Acceleration   : ");indiquer(a.acceleration);
+    printf("Position       = ");indiquer(a.position);printf("\n");
+    printf("Vitesse        = ");indiquer(a.vitesse);printf("\n");
+    printf("Acceleration   = ");indiquer(a.acceleration);printf("\n");
     printf("\n");
-    printf("Dimensions     : ");indiquer(a.dimensions);
-    printf("Solidite       : %f\n",a.solidite);
-    printf("Masse          : %f\n",a.masse);
-    printf("Frottement     : %f\n",a.frottement);
-    printf("Rebondissement : %f\n",a.rebondissement);
+    printf("Dimensions     = ");indiquer(a.dimensions);printf("\n");
+    printf("Solidite       = %f\n",a.solidite);
+    printf("Masse          = %f\n",a.masse);
+    printf("Frottement     = %f\n",a.frottement);
+    printf("Rebondissement = %f\n",a.rebondissement);
     printf("\n");
-    printf("Graphique      : %s \n",a.graphique);
-    printf("Forme          : %d\n",a.forme);
-    if(a.contenu==NULL)
-    {printf("Contenu        : %s\n","Aucun");}
-    else
-    {printf("Contenu        : %s\n",(*a.contenu).nom);}
-    printf("\n==============================\n\n");
+    printf("Graphique      = %s \n",a.graphique);
+    printf("Forme          = %d \n",a.forme);
+    printf("\n============================================\n\n");
+}
+
+void identifier(OBJET a)
+{
+    printf("\n============================================\n\n");
+    printf("Type           = %s \n",a.type);
+    printf("Nom            = %s \n",a.nom);
+    printf("Identifiant    = %d\n",a.identifiant);
+    printf("\n============================================\n\n");
+}
+
+void jouerson(char* son)
+{
+    playSound(son);
 }
 

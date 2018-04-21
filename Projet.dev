@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=1
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000000000000000000
+CompilerSettings=0000000000000001000000
 
 [Unit1]
 FileName=graphic.c
@@ -72,8 +72,8 @@ BuildCmd=
 [VersionInfo]
 Major=0
 Minor=0
-Release=3
-Build=1
+Release=4
+Build=332
 LanguageID=1036
 CharsetID=1252
 CompanyName=LECRUBIER OLIVIER
@@ -84,8 +84,8 @@ LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=
-AutoIncBuildNr=0
+ProductVersion=0.4
+AutoIncBuildNr=1
 
 [Unit5]
 FileName=physique.c

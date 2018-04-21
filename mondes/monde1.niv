@@ -1,52 +1,38 @@
-type = balle ;
-nom = balle ;
+type = raquette ;
+nom = raquette ;
 identifiant = 0 ;
-position.x = 400 ;
-position.y = 400 ;
+position = ( 400 , 300 ) ;
 
-type = brique ;
-nom = brique ;
+type = rebord ;
+nom = rebord ;
+identifiant = 0 ;
+position = ( 400 , -400 ) ;
+dimensions = ( 800 , 800 ) ;
+
+type = rebord ;
+nom = rebord ;
 identifiant = 1 ;
-position.x = 600 ;
-position.y = 400 ;
+position = ( -400 , 400 ) ;
+dimensions = ( 800 , 800 ) ;
 
-type = brique ;
-nom = brique ;
+type = rebord ;
+nom = rebord ;
 identifiant = 2 ;
-position.x = 660 ;
-position.y = 400 ;
+position = ( 1200 , 400 ) ;
+dimensions = ( 800 , 800 ) ;
+
+type = rebord ;
+nom = rebord ;
+identifiant = 3 ;
+position = ( 400 , 1000 ) ;
+dimensions = ( 800 , 800 ) ;
+
+type = balle1 ;
+position = ( 400 , 200 ) ;
 
 type = balle2 ;
-nom = balle ;
-identifiant = 2 ;
-position.x = 400 ;
-position.y = 200 ;
+position = ( 200 , 200 ) ;
 
 
 type = balle3 ;
-nom = balle ;
-identifiant = 3 ;
-position.x = 600 ;
-position.y = 200 ;
-
-
-type = rebord ;
-identifiant = 0 ;
-position.x = 400 ;
-position.y = -300 ;
-dimensions.x = 800 ;
-dimensions.y = 600 ;
-
-type = rebord ;
-identifiant = 0 ;
-position.x = -400 ;
-position.y = 300 ;
-dimensions.x = 800 ;
-dimensions.y = 600 ;
-
-type = rebord ;
-identifiant = 0 ;
-position.x = 1200 ;
-position.y = 300 ;
-dimensions.x = 800 ;
-dimensions.y = 600 ;
+position = ( 600 , 400 ) ;

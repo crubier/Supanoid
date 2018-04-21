@@ -4,54 +4,76 @@ int main(void)
 {
     int fini = 0;						
     OBJET balle;
-    origineliste=NULL;
+    originelisteactifs=NULL;
+    erreur=FALSE;
+    DT=0.002;
+    
     fenetre=(*lireobjet("fenetre"));
+    fenetrepause=(*lireobjet("pause"));
 
     if(liremonde("monde1")==TRUE)
     {
       
     initialisationgraphiques();
-    printf("Initialisation ok\n");
+    if(erreur==FALSE)
+    {
+        printf("Initialisation ok\n");
+    }
+    else
+    {
+        printf("Erreurs reperees\n");
+    }
     while (!fini) 
     {
               // boucle infinie
+
+        
         switch (getLastKeyPressed())
         { 
             case -1:                     // aucune touche pressée
                 break;                     // On ne fait rien 
             case VK_LEFT:
-                (*(*origineliste).element).vitesse.x-=0.1;
+                (*(*originelisteactifs).element).acceleration.x=-SENSIBILITE;
                 break;
             case VK_RIGHT:
-                (*(*origineliste).element).vitesse.x+=0.1;
+                (*(*originelisteactifs).element).acceleration.x=SENSIBILITE;
                 break;
             case VK_UP:
-                (*(*origineliste).element).vitesse.y-=0.1; 
+                (*(*originelisteactifs).element).acceleration.y=-SENSIBILITE; 
                 break;
             case VK_DOWN:   
-                (*(*origineliste).element).vitesse.y+=0.1;
+                (*(*originelisteactifs).element).acceleration.y=SENSIBILITE;
                 break;
             case VK_ESCAPE:
                 fini = 1;      
                 break;
             case VK_F1:
-                decrire((*(*origineliste).element));
+                decrire( *(*rechercher("raquette","raquette",0)).element  );
                 break;
             case VK_F2:
-                decrire((*(*origineliste).element));
+                effacer();
                 break;
+            case VK_F3:
+                DT*=2;
+                break;
+            case VK_F4:
+                DT/=2;
+                break;
+            case VK_P:
+                pause();
+                break;
+                
         }
-        effacer();
-        dessin();
-        paint();                       // On affiche le résultat
-        sleepAWhile(DT*1000);                // On patiente 5 ms, ce qui fera un affichage
+               // On patiente 5 ms, ce qui fera un affichage
                                        // de 200 images/s, ce qui est largement suffisant
                                        // multiplier ce délai par 10 sur Sun Solaris
         interactions();
         mouvements();
-        /*rebond(&balle,&balle2,collision(balle,balle2)); 
-    	mouvement(&balle);
-    	mouvement(&balle2);*/
+        effacer();
+        dessin();
+        paint();                       // On affiche le résultat
+        sleepAWhile(1000*DT); 
+
     }
 }
   finish();                       // Cette méthode doit toujours être appelée en fin de programme  

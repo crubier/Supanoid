@@ -7,7 +7,8 @@ PTROBJET lireobjet(char* type)
     char propriete[LONGUEURMAXCHAINE];
 	FILE* fichier;
 
-    pobjet=creerobjet(type,0,type,vecteur(0,0),vecteur(0,0),vecteur(0,0),vecteur(0,0),1,1,0,1,NULL,"AUCUN",NOIR,RECTANGLE);
+    pobjet=nouvelobjet();
+    (*pobjet).type = type;
     strcpy(nom,"objets/");
     strcat(nom,type);
     strcat(nom,".obj");
@@ -15,14 +16,22 @@ PTROBJET lireobjet(char* type)
 
 	if (fichier==NULL)
 	{
-		printf("Impossible d'ouvrir le fichier de description du type d'objet %s",type);
+		printf("Impossible d'ouvrir le fichier de description du type d'objet %s \n",type);
+		erreur=TRUE;
 	}
 	else
 	{
-        while(fscanf(fichier," %s =",propriete)!=EOF && strcmp(propriete,"type")!=0)
+        printf("\nLecture du fichier de description du type d'objet %s \n",type);
+        while(fscanf(fichier," %s =",propriete)!=EOF)
         {
             fseek(fichier,1,SEEK_CUR);
-            if(entrerpropriete(fichier,pobjet,propriete)==FALSE)printf("Erreur sur la propriete %s \n",propriete);
+            printf("Ajout propriete %s a l objet %s ( valeur : ",propriete, type );
+            if(entrerpropriete(fichier,pobjet,propriete)==FALSE)
+            {
+                printf("Erreur sur la propriete %s ",propriete);
+                erreur=TRUE;
+            }             
+            printf(" )\n");
         }
     
 		fclose(fichier);
@@ -30,84 +39,223 @@ PTROBJET lireobjet(char* type)
 	return pobjet;
 }
 
+BOOLEAN liremonde(char* monde)
+{
+	PTROBJET pobjet;
+	CELLULE cellule;
+	char nom[LONGUEURMAXCHAINE];
+	char type[LONGUEURMAXCHAINE];
+    char propriete[LONGUEURMAXCHAINE];
+	FILE* fichier;
+
+    strcpy(nom,"mondes/");
+    strcat(nom,monde);
+    strcat(nom,".niv");
+	fichier=fopen(nom,"r");
+
+	if (fichier==NULL)
+	{
+		printf("Impossible d'ouvrir le fichier de description du monde %s !\n",monde);
+		erreur=TRUE;
+		return FALSE;
+	}
+	else
+	{
+        
+        printf("\n============================================\n\nLecture du monde %s :\n",monde);
+        
+        while(fscanf(fichier," %s =",propriete)!=EOF)
+        {
+            fseek(fichier,1,SEEK_CUR);
+            if(strcmp(propriete,"type")==0)
+            {
+                fscanf(fichier," %s ;",type);
+                printf("\n============================================\n\nAjout objet de type %s :\n",type);
+                pobjet=lireobjet(type);
+                ajoutercellule(pobjet);
+                printf("Creation objet de type %s termine ! \n",(*(*dernierecellule()).element).type);
+            }
+            else
+            {
+                printf("Ajout propriete %s a l objet %s ( valeur : ",propriete, type );
+                if(entrerpropriete(fichier,(*dernierecellule()).element,propriete)==FALSE)
+                {
+                    printf("Erreur sur la propriete %s ",propriete);
+                    erreur=TRUE;
+                }
+                printf(" )\n");
+            }
+        }
+        
+        printf("\nLecture du monde %s terminee !\n\n============================================\n\n",monde);
+		fclose(fichier);
+	}
+	return TRUE;
+}
+
 BOOLEAN entrerpropriete(FILE* fichier, PTROBJET pobjet, char* propriete)
 {
     char temp[LONGUEURMAXCHAINE];
     char* temp1;
    
+    if(strcmp(propriete,"type")==0)
+    {
+        fscanf(fichier," %s ;",temp);
+        (*pobjet)=(*lireobjet(temp));
+        printf("%s",temp);
+        return TRUE;
+    }
+   
+    if(strcmp(propriete,"nom")==0)
+    {
+        fscanf(fichier," %s ;",temp);
+        temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
+        strcpy(temp1,temp);
+        (*pobjet).nom=temp1;
+        printf("%s",temp);
+        return TRUE;
+    }
+    
     if(strcmp(propriete,"identifiant")==0)
     {
         fscanf(fichier," %d ;",&(*pobjet).identifiant);
+        printf("%d",(*pobjet).identifiant);
         return TRUE;
     }
     
-    if(strcmp(propriete,"position.x")==0)
+    if(strcmp(propriete,"position")==0)
     {
-        fscanf(fichier," %f ;",&(*pobjet).position.x);
-        return TRUE;
-    }
-    if(strcmp(propriete,"position.y")==0)
-    {
-        fscanf(fichier," %f ;",&(*pobjet).position.y);
+        fscanf(fichier," ( %f , %f ) ;",&(*pobjet).position.x,&(*pobjet).position.y);
+        indiquer((*pobjet).position);
         return TRUE;
     }
     
-    if(strcmp(propriete,"vitesse.x")==0)
+    if(strcmp(propriete,"vitesse")==0)
     {
-        fscanf(fichier," %f ;",&(*pobjet).vitesse.x);
-        return TRUE;
-    }
-    if(strcmp(propriete,"vitesse.y")==0)
-    {
-        fscanf(fichier," %f ;",&(*pobjet).vitesse.y);
+        fscanf(fichier," ( %f , %f ) ;",&(*pobjet).vitesse.x,&(*pobjet).vitesse.y);
+        indiquer((*pobjet).vitesse);
         return TRUE;
     }
     
-    if(strcmp(propriete,"acceleration.x")==0)
+    if(strcmp(propriete,"acceleration")==0)
     {
-        fscanf(fichier," %f ;",&(*pobjet).acceleration.x);
-        return TRUE;
-    }
-    if(strcmp(propriete,"acceleration.y")==0)
-    {
-        fscanf(fichier," %f ;",&(*pobjet).acceleration.y);
+        fscanf(fichier," ( %f , %f ) ;",&(*pobjet).acceleration.x,&(*pobjet).acceleration.y);
+        indiquer((*pobjet).acceleration);
         return TRUE;
     }
     
-    if(strcmp(propriete,"dimensions.x")==0)
+    if(strcmp(propriete,"forme")==0)
     {
-        fscanf(fichier," %f ;",&(*pobjet).dimensions.x);
-        return TRUE;
-    }
-    if(strcmp(propriete,"dimensions.y")==0)
-    {
-        fscanf(fichier," %f ;",&(*pobjet).dimensions.y);
+        fscanf(fichier," %s ;",temp);
+        (*pobjet).forme=conversionFORME(temp);
+        printf("%d",(*pobjet).forme);
         return TRUE;
     }
     
-    if(strcmp(propriete,"solidite")==0)
+    if(strcmp(propriete,"dimensions")==0)
     {
-        fscanf(fichier," %f ;",&(*pobjet).solidite);
+        fscanf(fichier," ( %f , %f ) ;",&(*pobjet).dimensions.x,&(*pobjet).dimensions.y);
+        indiquer((*pobjet).dimensions);
         return TRUE;
     }
-    
+       
     if(strcmp(propriete,"masse")==0)
     {
         fscanf(fichier," %f ;",&(*pobjet).masse);
+        printf("%g",(*pobjet).masse);
         return TRUE;
     }
     
     if(strcmp(propriete,"frottement")==0)
     {
         fscanf(fichier," %f ;",&(*pobjet).frottement);
+        printf("%g",(*pobjet).frottement);
         return TRUE;
     }
     
     if(strcmp(propriete,"rebondissement")==0)
     {
         fscanf(fichier," %f ;",&(*pobjet).rebondissement);
+        printf("%g",(*pobjet).rebondissement);
         return TRUE;
     }
+    
+    if(strcmp(propriete,"solidite")==0)
+    {
+        fscanf(fichier," %f ;",&(*pobjet).solidite);
+        printf("%g",(*pobjet).solidite);
+        return TRUE;
+    }
+    
+    if(strcmp(propriete,"attraction")==0)
+    {
+        fscanf(fichier," %f ;",&(*pobjet).attraction);
+        printf("%g",(*pobjet).attraction);
+        return TRUE;
+    }
+    
+    if(strcmp(propriete,"agressivite")==0)
+    {
+        fscanf(fichier," %f ;",&(*pobjet).agressivite);
+        printf("%g",(*pobjet).agressivite);
+        return TRUE;
+    }
+    
+    if(strcmp(propriete,"fils_type")==0)
+    {
+        fscanf(fichier," %s ;",temp);
+        temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
+        strcpy(temp1,temp);
+        (*pobjet).fils_type=temp1;
+        printf("%s",temp);
+        return TRUE;
+    }
+    
+    if(strcmp(propriete,"fils_nom")==0)
+    {
+        fscanf(fichier," %s ;",temp);
+        temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
+        strcpy(temp1,temp);
+        (*pobjet).fils_nom=temp1;
+        printf("%s",temp);
+        return TRUE;
+    }
+    
+    if(strcmp(propriete,"fils_identifiant")==0)
+    {
+        fscanf(fichier," %d ;",&(*pobjet).fils_identifiant);
+        printf("%d",(*pobjet).fils_identifiant);
+        return TRUE;
+    }
+    
+    
+    if(strcmp(propriete,"frere_type")==0)
+    {
+        fscanf(fichier," %s ;",temp);
+        temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
+        strcpy(temp1,temp);
+        (*pobjet).frere_type=temp1;
+        printf("%s",temp);
+        return TRUE;
+    }
+    
+    if(strcmp(propriete,"frere_nom")==0)
+    {
+        fscanf(fichier," %s ;",temp);
+        temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
+        strcpy(temp1,temp);
+        (*pobjet).frere_nom=temp1;
+        printf("%s",temp);
+        return TRUE;
+    }
+    
+    if(strcmp(propriete,"frere_identifiant")==0)
+    {
+        fscanf(fichier," %d ;",&(*pobjet).frere_identifiant);
+        printf("%d",(*pobjet).frere_identifiant);
+        return TRUE;
+    }
+    
     
     if(strcmp(propriete,"graphique")==0)
     {
@@ -115,34 +263,52 @@ BOOLEAN entrerpropriete(FILE* fichier, PTROBJET pobjet, char* propriete)
         temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
         strcpy(temp1,temp);
         (*pobjet).graphique=temp1;
+        printf("%s",temp);
         return TRUE;
     }
-    
-    if(strcmp(propriete,"nom")==0)
-    {
-        fscanf(fichier," %s ;",temp);
-        temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
-        strcpy(temp1,temp);
-        (*pobjet).nom=temp1;
-        return TRUE;
-    }
-
-    if(strcmp(propriete,"forme")==0)
-    {
-        fscanf(fichier," %s ;",temp);
-        (*pobjet).forme=conversionFORME(temp);
-        return TRUE;
-    }
-    
+     
     if(strcmp(propriete,"couleur")==0)
     {
         fscanf(fichier," %s ;",temp);
         (*pobjet).couleur=conversionCOLOR(temp);
+        printf("%d",(*pobjet).couleur);
         return TRUE;
     }
-
+    
+    if(strcmp(propriete,"son_creation")==0)
+    {
+        fscanf(fichier," %s ;",temp);
+        temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
+        strcpy(temp1,temp);
+        (*pobjet).son_creation=temp1;
+        printf("%s",temp);
+        return TRUE;
+    }
+    
+    if(strcmp(propriete,"son_choc")==0)
+    {
+        fscanf(fichier," %s ;",temp);
+        temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
+        strcpy(temp1,temp);
+        (*pobjet).son_choc=temp1;
+        printf("%s",temp);
+        return TRUE;
+    }
+    
+    if(strcmp(propriete,"son_destruction")==0)
+    {
+        fscanf(fichier," %s ;",temp);
+        temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
+        strcpy(temp1,temp);
+        (*pobjet).son_destruction=temp1;
+        printf("%s",temp);
+        return TRUE;
+    }
+    erreur = TRUE;
     return FALSE;    
 }
+
+
 
 int conversionFORME(char* forme)
 {
@@ -165,52 +331,4 @@ int conversionCOLOR(char* couleur)
     if(strcmp(couleur,"ORANGE")==0)return ORANGE;
     if(strcmp(couleur,"ROSE")==0)return ROSE;
     return BLANC;
-}
-
-BOOLEAN liremonde(char* monde)
-{
-	PTROBJET pobjet;
-	CELLULE cellule;
-	char nom[LONGUEURMAXCHAINE];
-	char type[LONGUEURMAXCHAINE];
-    char propriete[LONGUEURMAXCHAINE];
-	FILE* fichier;
-
-    strcpy(nom,"mondes/");
-    strcat(nom,monde);
-    strcat(nom,".niv");
-	fichier=fopen(nom,"r");
-
-	if (fichier==NULL)
-	{
-		printf("Impossible d'ouvrir le fichier de description du monde %s",monde);
-		return FALSE;
-	}
-	else
-	{
-        
-        while(fscanf(fichier," %s =",propriete)!=EOF)
-        {
-            fseek(fichier,1,SEEK_CUR);
-            if(strcmp(propriete,"type")==0)
-            {
-                fscanf(fichier," %s ;",type);
-                printf("Ajout objet de type %s :\n",type);
-                decrire(*lireobjet(type));
-                pobjet=lireobjet(type);
-                ajoutercellule(pobjet);
-                printf("Ajout objet de type %s termine ! \n\n",(*(*dernierecellule()).element).type);
-            }
-            else
-            {
-                printf("Ajout propriete %s :\n",type);
-                if(entrerpropriete(fichier,(*dernierecellule()).element,propriete)==FALSE)printf("Erreur sur la propriete %s \n",propriete);
-            }
-        }
-        
-        //objet=creerobjet(type,0,type,vecteur(0,0),vecteur(0,0),vecteur(0,0),vecteur(0,0),1,1,0,1,NULL,"AUCUN",BLANC,CERCLE);
-
-		fclose(fichier);
-	}
-	return TRUE;
 }

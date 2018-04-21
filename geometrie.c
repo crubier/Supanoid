@@ -51,11 +51,9 @@ COORD multiplicationscalaire(COORD a, float k)
     return multiplication(a,vecteur(k,k));
 }
 
-float scalaire(COORD a, COORD b)
+float produitscalaire(COORD a, COORD b)
 {
-    float res;
-    res=a.x*b.x+a.y*b.y;
-    return res;
+    return total(multiplication(a,b));
 }
 
 COORD normalisation(COORD a)
@@ -71,12 +69,17 @@ float distance(COORD a, COORD b)
 
 float norme(COORD a)
 {
-    return sqrt(scalaire(a,a));
+    return sqrt(produitscalaire(a,a));
+}
+
+float total(COORD a)
+{
+    return a.x+a.y;
 }
 
 float distanceaxe(COORD a, COORD b, COORD axe)
 {
-    return scalaire(difference(a,b),normalisation(axe));
+    return produitscalaire(difference(a,b),normalisation(axe));
 }
 
 COORD arrondi(COORD a)

@@ -7,9 +7,10 @@
 #include "key.h"
 
 #define LONGUEURMAXCHAINE 100
-#define DT 0.002
+#define ATTRACTION 0.1
+#define SENSIBILITE 0.2
 
-typedef enum {RECTANGLE, CERCLE, INCONNUE} FORME;
+typedef enum {INCONNUE, RECTANGLE, CERCLE} FORME;
 
 typedef struct coordstruct
 {
@@ -19,24 +20,37 @@ typedef struct coordstruct
 
 typedef struct objetstruct
 {
+  		char* type;
         char* nom;
   		int identifiant;
-  		char* type;
 
         COORD position;
  		COORD vitesse;
  		COORD acceleration;
 
+ 		FORME forme;
  		COORD dimensions;
- 		float solidite;
  		float masse;
  		float frottement;
  		float rebondissement;
+ 		float solidite;
+ 		float attraction;
+ 		float agressivite;
 
- 		struct objetstruct* contenu;
+ 		char* fils_type;
+ 		char* fils_nom;
+ 		int fils_identifiant;
+ 		
+ 		char* frere_type;
+ 		char* frere_nom;
+ 		int frere_identifiant;
+ 		
  		char* graphique;
         COULEUR couleur;
- 		FORME forme;
+        char* son_creation;
+        char* son_choc;
+        char* son_destruction;
+
  		
 } OBJET, *PTROBJET;
 
@@ -50,15 +64,23 @@ typedef struct cellulestruct
 
 /*VARIABLES GLOBALES*/
 OBJET fenetre;
-PTRCELLULE origineliste;
-
+OBJET fenetrepause;
+PTRCELLULE originelisteactifs;
+PTRCELLULE originelisteinactifs;
+BOOLEAN erreur;
+float DT;
 
 /*PHYSIQUE*/
+void pause(void);
 void mouvement(PTROBJET objet);
 void mouvements(void);
 OBJET positionsuivante(OBJET objet);
-void rebond(PTROBJET objeta, PTROBJET objetb, COORD normale);
-COORD collision(OBJET objeta, OBJET objetb);
+void rebond(PTROBJET objeta, PTROBJET objetb);
+void gravitation(PTROBJET objeta, PTROBJET objetb);
+void frottement(PTROBJET objet);
+void disparition(PTROBJET objet);
+COORD normalecontact(OBJET objeta, OBJET objetb);
+COORD positionrelative(OBJET objeta, OBJET objetb);
 void interactions(void);
 
 /*GRAPHIQUES*/
@@ -68,6 +90,8 @@ void dessiner(OBJET objet);
 void initialisationgraphiques(void);
 void indiquer(COORD a);
 void decrire(OBJET a);
+void identifier(OBJET a);
+void jouerson(char* son);
 
 /* GEOMETRIE*/
 COORD vecteur(float x, float y);
@@ -77,7 +101,8 @@ COORD difference(COORD a, COORD b);
 COORD inverse(COORD a);
 COORD multiplication(COORD a, COORD b);
 COORD multiplicationscalaire(COORD a, float k);
-float scalaire(COORD a, COORD b);
+float produitscalaire(COORD a, COORD b);
+float total(COORD a);
 COORD normalisation(COORD a);
 float distance(COORD a, COORD b);
 float norme(COORD a);
@@ -87,40 +112,54 @@ COORD arrondi(COORD a);
 /*OBJETS*/
 PTROBJET creerobjet
 (
+  		char* type,
         char* nom,
   		int identifiant,
-  		char* type,
 
         COORD position,
  		COORD vitesse,
  		COORD acceleration,
 
+ 		FORME forme,
  		COORD dimensions,
- 		float solidite,
  		float masse,
  		float frottement,
  		float rebondissement,
+ 		float solidite,
+ 		float attraction,
+ 		float agressivite,
 
- 		PTROBJET contenu,
+ 		char* fils_type,
+ 		char* fils_nom,
+ 		int fils_identifiant,
+ 		
+ 		char* frere_type,
+ 		char* frere_nom,
+ 		int frere_identifiant,
+ 		
  		char* graphique,
         COULEUR couleur,
- 		FORME forme
+        char* son_creation,
+        char* son_choc,
+        char* son_destruction
 );
-
+PTROBJET nouvelobjet(void);
+void verifierpointeur(char* p);
 
 /*LISTES*/
 PTRCELLULE creercellule(PTROBJET pobjet);
+PTRCELLULE premierecellule(void);
 PTRCELLULE dernierecellule(void);
 BOOLEAN ajoutercellule(PTROBJET pobjet);
 BOOLEAN liercellules(PTRCELLULE cellulea, PTRCELLULE celluleb);
 BOOLEAN verifiercellules(PTRCELLULE cellulea, PTRCELLULE celluleb);
-PTRCELLULE rechercher(char* nom, int identifiant);
+PTRCELLULE rechercher(char* type, char* nom, int identifiant);
 PTRCELLULE elementnumero(int i);
+void supprimercellule(PTRCELLULE pcellule);
 
 /*FICHIERS*/
-BOOLEAN entrerpropriete(FILE* fichier, PTROBJET objet, char* propriete);
 PTROBJET lireobjet(char* type);
+BOOLEAN liremonde(char* monde);
+BOOLEAN entrerpropriete(FILE* fichier, PTROBJET pobjet, char* propriete);
 int conversionFORME(char* forme);
 int conversionCOLOR(char* couleur);
-BOOLEAN liremonde(char* monde);
-
