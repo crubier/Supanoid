@@ -19,9 +19,9 @@ void mouvements(void)
     PTRCELLULE pcellule;
     pcellule=premierecellule();
 
-    while(pcellule!=NULL)
+    while(pcellule!=NULL)		//On parcourt la liste des objets
     {
-		if( (*(*pcellule).element).couche !=0 )
+		if( (*(*pcellule).element).couche !=0 )	// seuls les objets presents a un etages sont calcules
 		{
         	mouvement((*pcellule).element);
 		}
@@ -33,7 +33,7 @@ void mouvements(void)
 OBJET positionsuivante(OBJET objet)
 {
     OBJET res;
-    res=objet;
+    res=objet;												//On integre les vitesses et les accelerations
  	res.vitesse=somme(res.vitesse,res.acceleration);
  	res.position=somme(res.position,res.vitesse);
  	return res;
@@ -59,7 +59,6 @@ void rebond(PTRCELLULE pcellulea, PTRCELLULE pcelluleb)
 		sprintf(temp,"evenements/collision[%s,%s];",ecrireIDENTIFIANT(*(*pcellulea).identifiant),ecrireIDENTIFIANT(*(*pcelluleb).identifiant));
 		executercommande(temp,VIDE);
 
-                   //Voir le fichier maths.nb
         coef=((*objeta).rebondissement*(*objetb).rebondissement)/(((*objeta).masse+(*objetb).masse)*norme(normale)*norme(normale));      
   
         //printf("Rebond %s - %s valeur %g\n",(*objeta).nom,(*objetb).nom,coef);
@@ -141,10 +140,49 @@ void frottement(PTRCELLULE pcellule)
 
 void degradation(PTRCELLULE pcellule)
 {
+	if(pcellule==NULL)return;
+	if((*pcellule).element==NULL)return;
     if((*(*pcellule).element).solidite<=0)
 	{
 		supprimercellule(pcellule);
 	}
+	return;
+}
+
+void chronometrer(PTRCELLULE pcellule)
+{
+	float chronoinitial;
+	float chronofinal;
+
+	if(pcellule==NULL)return;
+	if((*pcellule).element==NULL)return;
+
+	chronoinitial=(*(*pcellule).element).chronometre;
+	chronofinal=(*(*pcellule).element).chronometre;
+
+	if(chronoinitial!=0)
+	{
+		if(chronoinitial>0)
+		{
+			chronofinal=chronofinal-DT;
+		}
+		else
+		{
+			chronofinal=chronofinal+DT;
+		}
+		if((chronoinitial>=0 && chronofinal<=0) || (chronoinitial<=0 && chronofinal>=0))
+		{
+			(*(*pcellule).element).chronometre=0;
+			char temp[LONGCHAINE];
+			sprintf(temp,"evenements/chronometre[%s];",ecrireIDENTIFIANT(*(*pcellule).identifiant));
+			executercommande(temp,VIDE);
+		}
+		else
+		{
+			(*(*pcellule).element).chronometre=chronofinal;
+		}
+	}
+	return;
 }
 
 COORD normalecontact(OBJET objeta, OBJET objetb)
@@ -256,8 +294,6 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
 	 	return res;
     }
 
-
-
    /* if(norme(res)!=0)
     {printf("Normale : ");indiquer(res);printf(" Norme : %g \n",norme(res));}*/
     
@@ -281,6 +317,7 @@ void interactions(void)
     while(pcellulea!=NULL)
     {
         pcelluleb=(*pcellulea).suivant;
+
         while(pcelluleb!=NULL)
         {
             if( ((int)(*(*pcellulea).element).couche & (int)(*(*pcelluleb).element).couche) != 0)  //Comparaison des couches
@@ -294,6 +331,7 @@ void interactions(void)
         if( (*(*pcellulea).element).couche !=0 ) // La couche 0 est inactive
         {
             frottement(pcellulea);
+			chronometrer(pcellulea);
             degradation(pcellulea);
         }
         

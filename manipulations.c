@@ -10,7 +10,7 @@
 /*=======================================================*/
 
 
-/* Manipulation des objets                  */
+// Manipulation du TDA OBJET 
 
 PTROBJET creerobjet
 (
@@ -30,7 +30,8 @@ PTROBJET creerobjet
 
  		char* graphique,
         char* texte,
-        COULEUR couleur
+        COULEUR couleur,
+		float chronometre
 )
 
 {
@@ -56,10 +57,9 @@ PTROBJET creerobjet
     (*pobjet).agressivite=agressivite;
 
     (*pobjet).graphique=creerchaine(graphique);
-    
     (*pobjet).texte=creerchaine(texte);
-
     (*pobjet).couleur=couleur;
+	(*pobjet).chronometre=chronometre;
     
     return pobjet;
 }
@@ -85,7 +85,8 @@ PTROBJET copierobjet(PTROBJET pobjet)
 
  		(*pobjet).graphique,
         (*pobjet).texte,
-        (*pobjet).couleur
+        (*pobjet).couleur,
+		(*pobjet).chronometre
     
     );
 }
@@ -110,7 +111,8 @@ PTROBJET nouvelobjet(void)
 
  		"INCONNU",
         "INCONNU",
-        NOIR
+        NOIR,
+		0
     );
 }
 
@@ -122,7 +124,7 @@ void supprimerobjet(PTROBJET pobjet)
 	free(pobjet);
 }
 
-/* Manipulation des identifiants            */
+// Manipulation du TDA IDENTIFIANT 
 
 PTRIDENTIFIANT creeridentifiant
 (
@@ -176,7 +178,7 @@ void supprimeridentifiant(PTRIDENTIFIANT pidentifiant)
 	free(pidentifiant);
 }
 
-/* Manipulation des cellules                */
+// Manipulation du TDA CELLULE
 
 PTRCELLULE creercellule
 (
@@ -311,10 +313,7 @@ void verifierpointeur(char* p)
 }
 
 
-/* recherche etc */
-
-
-
+// fonctions de recherche et reperage
 
 PTRCELLULE rechercher(PTRIDENTIFIANT pidentifiant)
 {
@@ -400,7 +399,7 @@ PTRIDENTIFIANT prochainidentifiant(PTRIDENTIFIANT pidentifiantdepart)
 {
 	PTRCELLULE pcellule;
 	PTRIDENTIFIANT pidentifiant;
-
+	if(pidentifiantdepart==NULL ) return NULL;
 	pcellule=premierecellule();
 	pidentifiant=copieridentifiant(pidentifiantdepart);
 
@@ -429,6 +428,7 @@ int nombretype(PTRIDENTIFIANT pidentifiant)
 {
 	int res;
 	PTRCELLULE pcellule;
+	if(pidentifiant==NULL ) return -1;
 	pcellule=premierecellule();
 	res=0;
 	while(pcellule!=NULL)
@@ -446,6 +446,7 @@ int nombretypenom(PTRIDENTIFIANT pidentifiant)
 {
 	int res;
 	PTRCELLULE pcellule;
+	if(pidentifiant==NULL ) return -1;
 	pcellule=premierecellule();
 	res=0;
 	while(pcellule!=NULL)
@@ -463,6 +464,7 @@ int nombretypenomnumero(PTRIDENTIFIANT pidentifiant)
 {
 	int res;
 	PTRCELLULE pcellule;
+	if(pidentifiant==NULL ) return -1;
 	pcellule=premierecellule();
 	res=0;
 	while(pcellule!=NULL)
@@ -556,11 +558,13 @@ PTRCELLULE recherchertypenomnumero(PTRIDENTIFIANT pidentifiant, PTRCELLULE pi, i
 
 int compareridentifiantstype(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIANT pidentifiantb)
 {
+	if(pidentifianta==NULL || pidentifiantb==NULL) return -1;
 	return strcmp((*pidentifianta).type,(*pidentifiantb).type);
 }
 
 int compareridentifiantstypenom(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIANT pidentifiantb)
 {
+	if(pidentifianta==NULL || pidentifiantb==NULL) return -1;
 	if(strcmp((*pidentifianta).nom,(*pidentifiantb).nom)==0)
         {
             return strcmp((*pidentifianta).type,(*pidentifiantb).type);
@@ -573,6 +577,7 @@ int compareridentifiantstypenom(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIANT pide
 
 int compareridentifiantstypenomnumero(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIANT pidentifiantb)
 {
+	if(pidentifianta==NULL || pidentifiantb==NULL) return -1;
     if(((*pidentifianta).numero-(*pidentifiantb).numero)==0)
     {
         if(strcmp((*pidentifianta).nom,(*pidentifiantb).nom)==0)
@@ -590,23 +595,24 @@ int compareridentifiantstypenomnumero(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIAN
     }
 }
 
-/*chaines de caractere*/
+// creation de chaines de caractere
 
 char* creerchaine(char* chaine)
 {
     char* res;
+	if(chaine==NULL)return NULL;
     res=malloc((strlen(chaine)+2)*sizeof(char));
     strcpy(res,chaine);
     return res;
 }
 
-///////// lecture chaines
+// lecture et ecriture des differents types de donnes a partir de chaines
 
 int lireint(char* chaine)
 {
 	int res;
 	res=0;
-	sscanf(chaine,"%d",&res);
+	if(sscanf(chaine,"%d",&res)!=1)fprintf(journal,"Erreur de lireint\n");
 	return res;
 }
 
@@ -622,14 +628,14 @@ float lirefloat(char* chaine)
 {
 	float res;
 	res=0;
-	sscanf(chaine,"%f",&res);
+	if(sscanf(chaine,"%f",&res)!=1)fprintf(journal,"Erreur de lirefloat\n");
 	return res;
 }
 
 char* ecrirefloat(float a)
 {
 	char res[LONGCHAINE];
-	strcpy(res,"0");
+	strcpy(res,"0.");
 	sprintf(res,"%g",a);	
 	return creerchaine(res);
 }
@@ -637,9 +643,16 @@ char* ecrirefloat(float a)
 COORD lireCOORD(char* chaine)
 {
 	COORD res;
+	int conv;
 	res.x=0;
 	res.y=0;
-	sscanf(chaine,"(%f:%f)",&(res.x),&(res.y));
+	conv=sscanf(chaine,"(%f:%f)",&(res.x),&(res.y));
+	if(conv!=2)
+	{
+		res.x=0;
+		res.y=0;
+		fprintf(journal ,"erreur de lirecoord\n");
+	}
 	return res;
 }
 
@@ -656,6 +669,7 @@ FORME lireFORME(char* chaine)
     if(strcmp(chaine,"CERCLE")==0)return CERCLE;
     if(strcmp(chaine,"RECTANGLE")==0)return RECTANGLE;
     if(strcmp(chaine,"RAQUETTE")==0)return RAQUETTE;
+	fprintf(journal,"Erreur de lireforme\n");
     return INCONNUE;
 }
 
@@ -682,6 +696,7 @@ COULEUR lireCOULEUR(char* chaine)
     if(strcmp(chaine,"MAGENTA")==0)return MAGENTA;
     if(strcmp(chaine,"ORANGE")==0)return ORANGE;
     if(strcmp(chaine,"ROSE")==0)return ROSE;
+	fprintf(journal,"Erreur de lirecouleur\n");
     return NOIR;
 }
 
@@ -709,24 +724,20 @@ IDENTIFIANT lireIDENTIFIANT(char* chaine)
 	char type[LONGCHAINE];
 	char nom[LONGCHAINE];
 	int numero;
-	char* temp;
+	int conv;
 
-	temp=creerchaine(chaine);
-	strcpy(type,VIDE);
-	strcpy(nom,VIDE);
-	numero=0;
+	conv=sscanf(chaine," ( %[a-zA-Z0-9 ]: %[a-zA-Z0-9 ] : %d ) ",type,nom,&numero);
 
-	if(sscanf(temp,"( %[^:]s : %[^:]s : %d )",type,nom,&numero)!=EOF)
+	if(conv==3)
 	{
-		temp=strstr(temp,"(")+sizeof(char);
-		sscanf(temp," %[^:]s ",type);
-		temp=strstr(temp,":")+sizeof(char);
-		sscanf(temp," %[^:]s ",nom);
-		temp=strstr(temp,":")+sizeof(char);
-		sscanf(temp," %d )",&numero);
-
+		pres=creeridentifiant(type,nom,numero);
 	}
-	pres=creeridentifiant(type,nom,numero);
+	else
+	{
+		pres=nouvelidentifiant();
+		fprintf(journal,"Erreur de lireidentifiant\n");
+	}
+
 	return *pres;
 }
 
@@ -775,6 +786,8 @@ char* ecrireOBJET(OBJET a)
 	strcat(res,temp);
     sprintf(temp,"Couleur          : %s \n",ecrireCOULEUR(a.couleur));
 	strcat(res,temp);
+    sprintf(temp,"Chronometre      : %s \n",ecrirefloat(a.chronometre));
+	strcat(res,temp);
 
 	return creerchaine(res); 
 }
@@ -805,9 +818,8 @@ PTRCELLULE lireOBJET(char* chaine)
 	return rechercher(&identifiant);
 }
 
-///////////////////
 
-
+// Lecture et ecriture des proprietes et parametres des objets.
 
 void entrerpropriete(PTRCELLULE pcellule, char* propriete, char* valeur)
 {
@@ -890,6 +902,11 @@ void entrerpropriete(PTRCELLULE pcellule, char* propriete, char* valeur)
     if(strcmp(propriete,"couleur")==0)
     {
         (*pobjet).couleur=lireCOULEUR(valeur);
+    }
+
+    if(strcmp(propriete,"chronometre")==0)
+    {
+        (*pobjet).chronometre=lirefloat(valeur);
     }
         
     return ;
@@ -989,6 +1006,11 @@ char* afficherpropriete(PTRCELLULE pcellule, char* propriete)
         return ecrireCOULEUR((*pobjet).couleur);
     }
         
+    if(strcmp(propriete,"chronometre")==0)
+    {
+        return ecrirefloat((*pobjet).chronometre);
+    }
+
     return ;
 }
 

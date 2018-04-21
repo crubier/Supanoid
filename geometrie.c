@@ -18,6 +18,22 @@ COORD vecteur(float x, float y)
     res.y=y;
     return res;
 }
+
+COORD polaire2cartesien(COORD a)
+{
+    COORD res;
+    res.x=(a.x)*cos(a.y);
+    res.y=(a.x)*sin(a.y);
+    return res;
+}
+
+COORD cartesien2polaire(COORD a)
+{
+    COORD res;
+    res.y=atan2((a.y),(a.x));
+    res.x=sqrt((a.x)*(a.x)+(a.y)*(a.y));
+    return res;
+}
     
 COORD somme(COORD a, COORD b)
 {

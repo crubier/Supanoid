@@ -54,6 +54,7 @@ typedef struct objetstruct
  		char* graphique;						// une chaine de caractere indiquant l'image associee a l'objet
         char* texte;							// une chaine de caractere indiquant le texte affiche sur l'objet
         COULEUR couleur;						// sa couleur
+		float chronometre;						// un chronometre pour declencher des actions
 
  		
 } OBJET, *PTROBJET;
@@ -141,6 +142,12 @@ void action_modifierparametre(char* chaine);
 
 // generer un vecteur a partir de deux reels
 COORD vecteur(float x, float y);
+
+// generer un vecteur a partir de coordonnes polaires
+COORD polaire2cartesien(COORD a);
+
+// generer les coordonnes polaires d un vecteur en coordonnees cartesiennes
+COORD cartesien2polaire(COORD a);
 
 // somme de deux vecteurs
 COORD somme(COORD a, COORD b);
@@ -251,7 +258,8 @@ PTROBJET creerobjet
 
  		char* graphique,
         char* texte,
-        COULEUR couleur
+        COULEUR couleur,
+		float chronometre
 );
 
 // copie a partir d'un pointeur
@@ -431,6 +439,9 @@ void frottement(PTRCELLULE pcellule);
 
 // gerer la degradation d'un objet par les chocs
 void degradation(PTRCELLULE pcellule);
+
+// gerer le chrnonometre integre dans chaque cellule
+void chronometrer(PTRCELLULE pcellule);
 
 // calculer la normale de contact entre deux ojets (utilisee pour les rebonds)
 COORD normalecontact(OBJET objeta, OBJET objetb);

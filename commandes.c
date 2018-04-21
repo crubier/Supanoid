@@ -20,28 +20,30 @@ char* lireligne(char* lignecommande)
 	int i,nbcrochets;
 	BOOLEAN fini;
 
+
+//Initialisation des variables
 	fini=FALSE;
 	ligne=creerchaine(lignecommande);
 	arguments=malloc(LONGCHAINE*(NBPARAM+1)*sizeof(char));
-	for(temp=arguments;temp<(arguments+LONGCHAINE*NBPARAM*sizeof(char));temp+=sizeof(char))
+	for(temp=arguments;temp<(arguments+LONGCHAINE*NBPARAM*sizeof(char));temp+=sizeof(char))  
 	{
 		*temp='\0';
 	}
+
+//Si la ligne est vide ou ne contient pas de crochets, alors il n'y a rien à interpreter
 
 	if(strlen(ligne)<1)
 	{
 		strncpy(arguments,ligne,LONGCHAINE);
 		return arguments;
 	}
-	if(strstr(ligne,"[")==NULL || strstr(ligne,"]")==NULL) //si pas de crochets, pas de commande
+	if(strstr(ligne,"[")==NULL || strstr(ligne,"]")==NULL)
 	{
 		strncpy(arguments,ligne,LONGCHAINE);
 		return arguments;
 	}
 
 //Initialisation
-
-
 	
 	temp=ligne;
 	nbcrochets=0;
@@ -59,7 +61,7 @@ char* lireligne(char* lignecommande)
 		return arguments;
 	}
 
-//Placement nom commande
+//La chaine de caractere comprise entre le début et le premier crocher ouvrant est le nom de la commande, place dans la premiere case du resultat
 
 	debut=ligne;
 	vraidebut=debut;
@@ -77,7 +79,8 @@ char* lireligne(char* lignecommande)
 	}
 
 	i=0;
-//Placement arguments
+
+//On place ensuite les arguments, qui sont séparés par des virgules
 	while(fini==FALSE)
 	{
 		i++;
@@ -86,7 +89,7 @@ char* lireligne(char* lignecommande)
 		while(*debut==' ')debut+=sizeof(char);
 		fin=debut;
 		nbcrochets=0;
-		while( (*fin!=','|| nbcrochets!=0) && (*fin!=']' || nbcrochets!=0))
+		while( (*fin!=','|| nbcrochets!=0) && (*fin!=']' || nbcrochets!=0))		//Il faut que la virgule ou le crocher fermant la liste des arguments ne soit pas compris dans une sous commande, mais bien dans la commande evaluee
 		{
 			if(*fin=='[')nbcrochets++;
 			if(*fin==']')nbcrochets--;			
@@ -104,7 +107,7 @@ char* lireligne(char* lignecommande)
 		}
 	}
 
-//Retour
+//Retour du tableau contenant la commande et les arguments
 
 	return(arguments);
 
@@ -130,19 +133,21 @@ char* executerfichier(char* parametres)
 	char* res=NULL;
 	char* temp=NULL;
 
+//On ouvre le fichier
 	sprintf(nomfichier,"mondes/%s/%s.supanoid",repertoire,parametres);
 	fichier=fopen(nomfichier,"r");
 	if(fichier==NULL)
 	{
 		return NULL;
 	}
-	
 
+//Si c'est demandé, on l'ecrit dans le journal
 	if(modefonctionnement>=1);
 	{
 		fprintf(journal,"Ouverture fichier %s\n",nomfichier);	
 	}
 
+//On lit le fichier ligne par ligne
 	do
 	{
 		strcpy(lignecommande,VIDE);
@@ -151,8 +156,13 @@ char* executerfichier(char* parametres)
 		executercommande(lignecommande,parametres);
 
 	}while(res!=NULL);
-	fclose(fichier);
-	return("Fichier %s lu \n",nomfichier);
+
+//On le ferme et on retourne un message si besoin
+	fclose(fichier);	
+	if(modefonctionnement>=1);
+	{
+		return("Fichier %s lu \n",nomfichier);
+	}
 
 }
 
@@ -164,21 +174,23 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 
 	res=creerchaine(VIDE);
 
+//On organise la commande dans un tableau
 	parametres=lireligne(lignecommande);
 
+//En cas de probleme, on retourne un vide
 	if(parametres==NULL)return res;
 
-	if(strcmp(parametres,lignecommande)==0)
+
+	if(strcmp(parametres,lignecommande)==0)			//Si la premiere case du tableau=La ligne de commande alors il n'y a pas de "vraie" commande
 	{
 		if(modefonctionnement>=1)
 		{
-			printf("%s",parametres);
-			printf("\n",parametres);
+			printf("%s\n",parametres);
 		}
 	
 		res=creerchaine(lignecommande);
 	}
-	else
+	else											//Sinon on execute la commande
 	{
 
 		if(modefonctionnement>=1)
@@ -192,6 +204,8 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 			}
 			printf("%s];\n",parametres+LONGCHAINE*i*sizeof(char));
 		}
+
+// Liste des différentes commandes possibles pour l'utilisateur
 
 	// Passage de parametres
 	
@@ -292,22 +306,8 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 			res=creerchaine("imprimer");
 		}
 
-		if(strcmp(parametres,"aleatoire")==0)
-		{
-			float r;
-			executerargument(parametres,argumentsfichierparent,1,2);
-			action_ecrire(parametres);
-			r=
-				lirefloat(parametres + 1*LONGCHAINE*sizeof(char)) + 
-				(
-					((float)rand()/RAND_MAX)*
-					(lirefloat(parametres + 2*LONGCHAINE*sizeof(char))-lirefloat(parametres + 1*LONGCHAINE*sizeof(char)))
-					
-				 );
-			res=ecrirefloat(r);
-		}
 
-	//Reperage
+	//Reperage dans la liste
 	
 		if(strcmp(parametres,"dernierobjet")==0)
 		{
@@ -504,6 +504,18 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 			executerargument(parametres,argumentsfichierparent,1,1);
 			res= ecrirefloat(norme(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char))));
 		}
+
+		if(strcmp(parametres,"vecteur_cartesien2polaire")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,1);
+			res= ecrireCOORD(cartesien2polaire(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char))));
+		}
+
+		if(strcmp(parametres,"vecteur_polaire2cartesien")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,1);
+			res= ecrireCOORD(polaire2cartesien(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char))));
+		}
 	
 		if(strcmp(parametres,"vecteur_total")==0)
 		{
@@ -568,6 +580,8 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 			executerargument(parametres,argumentsfichierparent,1,1);
 			res=ecrirefloat(lireCOORD(parametres + 1*LONGCHAINE*sizeof(char)).y);
 		}
+
+	//Reels
 	
 		if(strcmp(parametres,"reel_somme")==0)
 		{
@@ -598,6 +612,12 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 			executerargument(parametres,argumentsfichierparent,1,1);
 			res= ecrirefloat(1/lirefloat(parametres + 1*LONGCHAINE*sizeof(char)));
 		}
+
+		if(strcmp(parametres,"reel_division")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,2);
+			res= ecrirefloat(lirefloat(parametres + 1*LONGCHAINE*sizeof(char))/lirefloat(parametres + 2*LONGCHAINE*sizeof(char)));
+		}
 	
 		if(strcmp(parametres,"reel_module")==0)
 		{
@@ -609,6 +629,36 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 		{
 			executerargument(parametres,argumentsfichierparent,1,2);
 			res= ecrirefloat(pow(lirefloat(parametres + 1*LONGCHAINE*sizeof(char)),lirefloat(parametres + 2*LONGCHAINE*sizeof(char))));
+		}
+
+		if(strcmp(parametres,"reel_exp")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,1);
+			res= ecrirefloat(exp(lirefloat(parametres + 1*LONGCHAINE*sizeof(char))));
+		}
+
+		if(strcmp(parametres,"reel_log")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,1);
+			res= ecrirefloat(log(lirefloat(parametres + 1*LONGCHAINE*sizeof(char))));
+		}
+
+		if(strcmp(parametres,"reel_cos")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,1);
+			res= ecrirefloat(cos(lirefloat(parametres + 1*LONGCHAINE*sizeof(char))));
+		}
+
+		if(strcmp(parametres,"reel_sin")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,1);
+			res= ecrirefloat(cos(lirefloat(parametres + 1*LONGCHAINE*sizeof(char))));
+		}
+
+		if(strcmp(parametres,"reel_pi")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,1);
+			res= ecrirefloat(M_PI*lirefloat(parametres + 1*LONGCHAINE*sizeof(char)));
 		}
 	
 		if(strcmp(parametres,"reel_egalite")==0)
@@ -662,6 +712,21 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 				res=ecrireint(1);
 			}
 		}
+
+		if(strcmp(parametres,"reel_aleatoire")==0)
+		{
+			float r;
+			executerargument(parametres,argumentsfichierparent,1,2);
+			action_ecrire(parametres);
+			r=
+				lirefloat(parametres + 1*LONGCHAINE*sizeof(char)) + 
+				(
+					((float)rand()/RAND_MAX)*
+					(lirefloat(parametres + 2*LONGCHAINE*sizeof(char))-lirefloat(parametres + 1*LONGCHAINE*sizeof(char)))
+					
+				 );
+			res=ecrirefloat(r);
+		}
 	
 	
 	//chaines
@@ -672,13 +737,25 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 			res= creerchaine(strcat(parametres + 1*LONGCHAINE*sizeof(char),parametres + 2*LONGCHAINE*sizeof(char)));
 		}
 	
+	//Controle de flux et tests
 	
 		if(strcmp(parametres,"egalite")==0)
 		{
 			executerargument(parametres,argumentsfichierparent,1,2);
 			res= ecrireint(strcmp(parametres + 1*LONGCHAINE*sizeof(char),parametres + 2*LONGCHAINE*sizeof(char)));
 		}
-	
+
+		if(strcmp(parametres,"et")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,2);
+			res= ecrirefloat(fabs(lirefloat(parametres + 1*LONGCHAINE*sizeof(char)))+fabs(lirefloat(parametres + 2*LONGCHAINE*sizeof(char))));
+		}
+
+		if(strcmp(parametres,"ou")==0)
+		{
+			executerargument(parametres,argumentsfichierparent,1,2);
+			res= ecrirefloat(fabs(lirefloat(parametres + 1*LONGCHAINE*sizeof(char)))*fabs(lirefloat(parametres + 2*LONGCHAINE*sizeof(char))));
+		}	
 	
 		if(strcmp(parametres,"si")==0)
 		{
@@ -713,7 +790,8 @@ char* executercommande(char* lignecommande,char* argumentsfichierparent)
 			decrireLISTEdetail();
 			res=creerchaine("decrireliste");
 		}
-	//recherche
+
+	//Si on a pas trouve, on execute le fichier associe au nom de la commande
 	
 		if(strcmp(res,VIDE)==0 && strlen(parametres)>0 )
 		{

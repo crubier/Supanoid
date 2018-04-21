@@ -10,6 +10,7 @@
 
 void pause(void)
 {
+	//On met le programme en pause
 	system("pause");
 	return;
 }
@@ -17,6 +18,8 @@ void pause(void)
 void clavier(void)
 {
 	char temp[LONGCHAINE];
+
+	//On teste simplement les touches
 	switch (getLastKeyPressed())
         { 
             case -1:
@@ -229,7 +232,7 @@ void dessin(void)
 
 	setForegroundColor((*(*fenetre).element).couleur);
 	clearRect(0, 0, (*(*fenetre).element).dimensions.x,(*(*fenetre).element).dimensions.y);
-    for(i=1;i<=COUCHES;i*=2)
+    for(i=1;i<=COUCHES;i*=2)								// On parcourt les couches
     {
         while(pcellule!=NULL)
         {
@@ -251,33 +254,58 @@ void dessiner(PTRCELLULE pcellule)
     x=((*(*pcellule).element).position.x-0.5*(*(*pcellule).element).dimensions.x)-((*(*focus).element).position.x-0.5*(*(*fenetre).element).dimensions.x);
     y=(-(*(*pcellule).element).position.y-0.5*(*(*pcellule).element).dimensions.y)-(-(*(*focus).element).position.y-0.5*(*(*fenetre).element).dimensions.y);
 
+	if(pcellule==NULL)
+	{
+		fprintf(journal,"Erreur dessin\n");
+		return;
+	}
+	else
+	{
+		if((*pcellule).element==NULL)
+		{
+			fprintf(journal,"Erreur dessin\n");
+			return;
+		}
+		else
+		{
+			if((*(*pcellule).element).graphique==NULL || (*(*pcellule).element).texte==NULL)
+			{
+				fprintf(journal,"Erreur dessin\n");
+				return;
+			}
+			else
+			{
 
-    setForegroundColor((*(*pcellule).element).couleur);
-
-    if(strcmp((*(*pcellule).element).graphique,"INCONNU")!=0)/*si le fichier n'existe pas, rien ne sera affiché, les formes seront affichée sulement si graphique = INCONNU*/
-    {
-        sprintf(nom,"mondes/%s/images/%s.png",repertoire,(*(*pcellule).element).graphique);
-        drawImage(nom, x,y);
-    }
-    else
-    {
-        if((*(*pcellule).element).forme==CERCLE) 
-        {
-            fillOval(x,y, (*(*pcellule).element).dimensions.x, (*(*pcellule).element).dimensions.y);
-        }
-        else
-        {
-            fillRect(x,y, (*(*pcellule).element).dimensions.x, (*(*pcellule).element).dimensions.y);
-        }
-    }
-
-	if(strcmp((*(*pcellule).element).texte,"INCONNU")!=0)
-    {
-		strcpy(nom,(*(*pcellule).element).texte);
-		
-        drawText(nom, x,y);
-    }
-
+			    setForegroundColor((*(*pcellule).element).couleur);
+			
+			    if(strcmp((*(*pcellule).element).graphique,"INCONNU")!=0)//si le fichier n'existe pas, rien ne sera affiché, les formes seront affichée seulement si graphique = INCONNU
+			    {
+			        sprintf(nom,"mondes/%s/images/%s.png",repertoire,(*(*pcellule).element).graphique);
+			        drawImage(nom, x,y);
+			    }
+			    else
+			    {
+				//affichage de la forme de l'objet
+			        if((*(*pcellule).element).forme==CERCLE) 
+			        {
+			            fillOval(x,y, (*(*pcellule).element).dimensions.x, (*(*pcellule).element).dimensions.y);
+			        }
+			        else
+			        {
+			            fillRect(x,y, (*(*pcellule).element).dimensions.x, (*(*pcellule).element).dimensions.y);
+			        }
+			    }
+				
+				//affichage du texte
+				if(strcmp((*(*pcellule).element).texte,"INCONNU")!=0)
+			    {
+					strcpy(nom,(*(*pcellule).element).texte);
+					
+			        drawText(nom, x,y);
+			    }
+			}
+		}
+	}
 }
 
 void decrireLISTE(void)
@@ -331,6 +359,7 @@ void initialisation(void)
     focus=fenetre;
 	fprintf(journal,"fenetre : %s ",ecrireIDENTIFIANT(*(*fenetre).identifiant));
 
+	//initialisation des variables globales
 	SENSIBILITE=0.5;
     DT=0.002;
     ATTRACTION=0.1;
@@ -422,6 +451,9 @@ void cloture(void)
 	PTRCELLULE pcellule;
 	PTRCELLULE pcellulesuivant;
 	pcellule=premierecellule();
+
+
+//Ca fait planter le programme dans certaines conditions lorsque l'on met ça... bizarre
 
 /*	while(pcellule!=NULL)
 	{
