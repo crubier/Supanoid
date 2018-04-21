@@ -5,11 +5,11 @@
 #define PROJET_PRIVATE_H
 
 /* VERSION DEFINITIONS */
-#define VER_STRING	"0.0.6.698"
+#define VER_STRING	"0.0.7.29"
 #define VER_MAJOR	0
 #define VER_MINOR	0
-#define VER_RELEASE	6
-#define VER_BUILD	698
+#define VER_RELEASE	7
+#define VER_BUILD	29
 #define COMPANY_NAME	"LECRUBIER OLIVIER"
 #define FILE_VERSION	""
 #define FILE_DESCRIPTION	"Supanoid"
@@ -18,6 +18,6 @@
 #define LEGAL_TRADEMARKS	""
 #define ORIGINAL_FILENAME	""
 #define PRODUCT_NAME	""
-#define PRODUCT_VERSION	"0.6"
+#define PRODUCT_VERSION	"0.7"
 
 #endif /*PROJET_PRIVATE_H*/

@@ -18,11 +18,8 @@ PTROBJET creerobjet
  		float solidite,
  		float agressivite,
 
-        PTRIDENTIFIANT fils,		
-        PTRIDENTIFIANT frere,
- 		
  		char* graphique,
-        char* son,
+        char* texte,
         COULEUR couleur
 )
 
@@ -48,12 +45,9 @@ PTROBJET creerobjet
     (*pobjet).attraction=attraction;
     (*pobjet).agressivite=agressivite;
 
-    (*pobjet).fils=copieridentifiant(fils);
-    (*pobjet).frere=copieridentifiant(frere);
-
-    (*pobjet).graphique=creerchaine(son);
+    (*pobjet).graphique=creerchaine(graphique);
     
-    (*pobjet).son=creerchaine(son);
+    (*pobjet).texte=creerchaine(texte);
 
     (*pobjet).couleur=couleur;
     
@@ -62,6 +56,7 @@ PTROBJET creerobjet
 
 PTROBJET copierobjet(PTROBJET pobjet)
 {
+	if(pobjet==NULL)return NULL;
     return creerobjet
     (
         (*pobjet).position,
@@ -78,11 +73,8 @@ PTROBJET copierobjet(PTROBJET pobjet)
  		(*pobjet).solidite,
  		(*pobjet).agressivite,
 
-        (*pobjet).fils,	
-        (*pobjet).frere,
- 		
  		(*pobjet).graphique,
-        (*pobjet).son,
+        (*pobjet).texte,
         (*pobjet).couleur
     
     );
@@ -106,9 +98,6 @@ PTROBJET nouvelobjet(void)
  		1000000,
  		0,
 
-        nouvelidentifiant(),
-        nouvelidentifiant(),
- 		
  		"INCONNU",
         "INCONNU",
         NOIR
@@ -142,6 +131,7 @@ PTRIDENTIFIANT creeridentifiant
 
 PTRIDENTIFIANT copieridentifiant(PTRIDENTIFIANT pidentifiant)
 {
+	if(pidentifiant==NULL)return NULL;
     return creeridentifiant
     (
  		(*pidentifiant).type,
@@ -193,6 +183,7 @@ PTRCELLULE creercellule
 
 PTRCELLULE copiercellule(PTRCELLULE pcellule)
 {
+	if(pcellule==NULL)return NULL;
     return creercellule
     (
  		copierobjet((*pcellule).element),
@@ -251,17 +242,15 @@ PTRCELLULE rechercher(PTRIDENTIFIANT pidentifiant)
     PTRCELLULE pcellule;
     pcellule=premierecellule();
 
-	printf("Recherche de %s :\n",ecrireIDENTIFIANT(*pidentifiant));
+	printf("Recherche de %s : ",ecrireIDENTIFIANT(*pidentifiant));
     while(pcellule!=NULL)
     {
-		printf("      %s ",ecrireIDENTIFIANT(*(*pcellule).identifiant));
         if(compareridentifiants(pidentifiant,(*pcellule).identifiant)==0)
         {
 			printf("OK\n");
             return pcellule;
         }
         pcellule=(*pcellule).suivant;
-		printf("NON\n");
     }
 	printf("NON trouve\n");
     return NULL;
@@ -589,13 +578,9 @@ char* ecrireOBJET(OBJET a)
 	strcat(res,temp);
 	sprintf(temp,"Agressivite      : %s \n",ecrirefloat(a.agressivite));
 	strcat(res,temp);
-	sprintf(temp,"Fils             : %s \n",ecrireIDENTIFIANT(*a.fils));
-	strcat(res,temp);
-	sprintf(temp,"Frere            : %s \n",ecrireIDENTIFIANT(*a.frere));
-	strcat(res,temp);
 	sprintf(temp,"Graphique        : %s \n",(a.graphique));
 	strcat(res,temp);
-    sprintf(temp,"Son              : %s \n",(a.son));
+    sprintf(temp,"Texte            : %s \n",(a.texte));
 	strcat(res,temp);
     sprintf(temp,"Couleur          : %s \n",ecrireCOULEUR(a.couleur));
 	strcat(res,temp);
@@ -657,6 +642,25 @@ void executercommande(char* lignecommande)
 		return;
 	}
 	
+	if(strcmp(parametres,"initialiser")==0)
+	{
+		action_initialiser(parametres);
+		return;
+	}
+
+	if(strcmp(parametres,"affichernoms")==0)
+	{
+		action_affichernoms(parametres);
+		return;
+	}
+
+	if(strcmp(parametres,"cachernoms")==0)
+	{
+		action_cachernoms(parametres);
+		return;
+	}
+	
+
 	sprintf(nomfichier,"actions/%s",parametres);
 	executerfichier(creerchaine(nomfichier));
 	
@@ -771,7 +775,6 @@ void entrerpropriete(PTRCELLULE pcellule, char* propriete, char* valeur)
         (*pobjet).agressivite=lirefloat(valeur);
         return ;
     }
-    
       
     if(strcmp(propriete,"graphique")==0)
     {
@@ -779,9 +782,9 @@ void entrerpropriete(PTRCELLULE pcellule, char* propriete, char* valeur)
         return ;
     }
      
-  	if(strcmp(propriete,"son")==0)
+  	if(strcmp(propriete,"texte")==0)
     {
-        (*pobjet).son=creerchaine(valeur);
+        (*pobjet).texte=creerchaine(valeur);
         return ;
     }
 

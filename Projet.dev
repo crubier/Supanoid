@@ -52,8 +52,8 @@ BuildCmd=
 [VersionInfo]
 Major=0
 Minor=0
-Release=6
-Build=698
+Release=7
+Build=29
 LanguageID=1036
 CharsetID=1252
 CompanyName=LECRUBIER OLIVIER
@@ -64,7 +64,7 @@ LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=0.6
+ProductVersion=0.7
 AutoIncBuildNr=1
 
 [Unit6]

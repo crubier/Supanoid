@@ -13,6 +13,7 @@ int main(void)
     executerfichier("monde");
 
     initialisation();
+	initialisationgraphique();
 
     while (!fini) 
     {        
@@ -26,6 +27,7 @@ int main(void)
     }
 
     cloture();
+	cloturegraphique();
 
     return 1;
 }

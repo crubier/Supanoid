@@ -47,7 +47,7 @@ void clavier(void)
                 decrireLISTEdetail();
                 break;
             case VK_F2:
-                effacer();
+                 executercommande("initialiser[];");
                 break;
             case VK_F3:
                 DT*=2;
@@ -60,6 +60,12 @@ void clavier(void)
 				break;
 			case VK_F7:
 				SENSIBILITE*=1.05;
+				break;
+			case VK_F8:
+				executercommande("affichernoms[255];");
+				break;
+			case VK_F9:
+				executercommande("cachernoms[255];");
 				break;
             case VK_P:
                 pause();
@@ -95,6 +101,7 @@ void dessiner(PTRCELLULE pcellule)
     y=((*(*pcellule).element).position.y-0.5*(*(*pcellule).element).dimensions.y)-((*(*fenetre).element).position.y-0.5*(*(*fenetre).element).dimensions.y);
    	
     setForegroundColor((*(*pcellule).element).couleur);
+
     if(strcmp((*(*pcellule).element).graphique,"INCONNU")!=0)/*si le fichier n'existe pas, rien ne sera affiché, les formes seront affichée sulement si graphique = INCONNU*/
     {
         sprintf(nom,"%s/images/%s.png",repertoire,(*(*pcellule).element).graphique);
@@ -111,6 +118,14 @@ void dessiner(PTRCELLULE pcellule)
             fillRect(x,y, (*(*pcellule).element).dimensions.x, (*(*pcellule).element).dimensions.y);
         }
     }
+
+	if(strcmp((*(*pcellule).element).texte,"INCONNU")!=0)
+    {
+		strcpy(nom,(*(*pcellule).element).texte);
+		
+        drawText(nom, x,y);
+    }
+
 }
 
 void decrireLISTE(void)
@@ -169,14 +184,20 @@ void initialisation(void)
     DT=0.002;
 	fini = 0;
 
+	fprintf(journal,": OK\n");   
+}
 
+void initialisationgraphique()
+{
     start((int)(*(*fenetre).element).dimensions.x,(int)(*(*fenetre).element).dimensions.y);
 
     setBackgroundColor(BLACK);
     setForegroundColor(RED);
-    clearRect(0, 0, 800, 800);
 
-	fprintf(journal,": OK\n");
+	setFontSize(12);
+	setFontStyle(PLAIN);
+
+    clearRect(0, 0, 800, 800);
 
     registerKeyPressed(VK_LEFT);       
     registerKeyPressed(VK_RIGHT);     
@@ -223,10 +244,13 @@ void initialisation(void)
 
 
     setBackgroundColor((*(*fenetre).element).couleur);        
-    clearRect(0, 0, (int)(*(*fenetre).element).dimensions.x, (int)(*(*fenetre).element).dimensions.y);      
+    clearRect(0, 0, (int)(*(*fenetre).element).dimensions.x, (int)(*(*fenetre).element).dimensions.y); 
+}
+void cloture(void)
+{ 
 }
 
-void cloture(void)
+void cloturegraphique(void)
 {
     finish(); 
 }

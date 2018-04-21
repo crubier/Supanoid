@@ -44,11 +44,8 @@ typedef struct objetstruct
  		float attraction;
  		float agressivite;
 
- 		struct identifiantstruct* fils;
- 		struct identifiantstruct* frere;
-
  		char* graphique;
-        char* son;
+        char* texte;
         COULEUR couleur;
 
  		
@@ -78,6 +75,9 @@ float SENSIBILITE;
 void action_jouerson(char* chaine);
 void action_creerobjet(char* chaine);
 void action_modifierpropriete(char* chaine);
+void action_initialiser(char* chaine);
+void action_affichernoms(char* chaine);
+void action_cachernoms(char* chaine);
 
 /*GEOMETRIE*/
 COORD vecteur(float x, float y);
@@ -105,6 +105,8 @@ void decrireCELLULE(PTRCELLULE pcellule);
 void decrireLISTEdetail(void);
 void initialisation(void);
 void cloture(void);
+void initialisationgraphique(void);
+void cloturegraphique(void);
 void rapportererreur(void);
 
 /*MANIPULATIONS*/
@@ -124,11 +126,8 @@ PTROBJET creerobjet
  		float solidite,
  		float agressivite,
 
-        PTRIDENTIFIANT fils,		
-        PTRIDENTIFIANT frere,
- 		
  		char* graphique,
-        char* son,
+        char* texte,
         COULEUR couleur
 );
 PTROBJET copierobjet(PTROBJET pobjet);

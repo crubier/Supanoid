@@ -48,6 +48,7 @@ void rebond(PTRCELLULE pcellulea, PTRCELLULE pcelluleb)
     if(norme(normale)!=0)
  	{
         float coef;
+
                    //Voir le fichier maths.nb
         coef=((*objeta).rebondissement*(*objetb).rebondissement)/(((*objeta).masse+(*objetb).masse)*norme(normale)*norme(normale));      
   
@@ -149,7 +150,9 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
             res=normalisation(res);
 
 			res=somme(res,multiplicationscalaire(vecteur(1/objeta.dimensions.x,0),produitscalaire(vecteur(1,0),difference(objeta.position,objetb.position))));
-        }
+        
+			executercommande("jouerson[rebond1];");
+		}
         else
         {
             res=vecteur(0,0);
@@ -168,7 +171,9 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
             res=normalisation(res);
 
 			res=somme(res,multiplicationscalaire(vecteur(-1/objetb.dimensions.x,0),produitscalaire(vecteur(1,0),difference(objeta.position,objetb.position))));
-        }
+
+			executercommande("jouerson[rebond1];");        
+		}
         else
         {
             res=vecteur(0,0);
@@ -185,6 +190,8 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
             res=arrondi(multiplicationscalaire(normalisation(multiplication(difference(objeta.position, objetb.position),dir)),sqrt(0.5)));
 
             res=normalisation(res);
+
+			executercommande("jouerson[rebond1];");     
         }
         else
         {
@@ -204,6 +211,7 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
 
             res=normalisation(res);
 
+			executercommande("jouerson[rebond2];");     
         }
         else
         {
@@ -219,6 +227,8 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
             res=difference(positionsuivante(objeta).position,positionsuivante(objetb).position);
           
             res=normalisation(res);
+
+			executercommande("jouerson[rebond2];");     
         }
         else
         {

@@ -1,7 +1,7 @@
 creerobjet[balle,balle,1];
 modifierpropriete[dernierobjet,dimensions,(20:20)];
 modifierpropriete[dernierobjet,position,(10:10)];
-modifierpropriete[dernierobjet,vitesse,(1:1)];
+modifierpropriete[dernierobjet,vitesse,(2:2)];
 modifierpropriete[dernierobjet,couche,1];
 modifierpropriete[dernierobjet,frottement,0];
 modifierpropriete[dernierobjet,masse,0.1];
@@ -14,7 +14,7 @@ modifierpropriete[dernierobjet,solidite,100];
 creerobjet[balle,balle,2];
 modifierpropriete[dernierobjet,dimensions,(20:20)];
 modifierpropriete[dernierobjet,position,(10:-10)];
-modifierpropriete[dernierobjet,vitesse,(1:-1)];
+modifierpropriete[dernierobjet,vitesse,(2:-2)];
 modifierpropriete[dernierobjet,couche,1];
 modifierpropriete[dernierobjet,frottement,0];
 modifierpropriete[dernierobjet,masse,0.1];
@@ -24,11 +24,10 @@ modifierpropriete[dernierobjet,couleur,VERT];
 modifierpropriete[dernierobjet,agressivite,0.25];
 modifierpropriete[dernierobjet,solidite,100];
 
-
 creerobjet[balle,balle,3];
 modifierpropriete[dernierobjet,dimensions,(20:20)];
 modifierpropriete[dernierobjet,position,(-10:10)];
-modifierpropriete[dernierobjet,vitesse,(-1:1)];
+modifierpropriete[dernierobjet,vitesse,(-2:2)];
 modifierpropriete[dernierobjet,couche,1];
 modifierpropriete[dernierobjet,frottement,0];
 modifierpropriete[dernierobjet,masse,0.1];
@@ -41,7 +40,7 @@ modifierpropriete[dernierobjet,solidite,100];
 creerobjet[balle,balle,4];
 modifierpropriete[dernierobjet,dimensions,(20:20)];
 modifierpropriete[dernierobjet,position,(-10:-10)];
-modifierpropriete[dernierobjet,vitesse,(-1:-1)];
+modifierpropriete[dernierobjet,vitesse,(-2:-2)];
 modifierpropriete[dernierobjet,couche,1];
 modifierpropriete[dernierobjet,frottement,0];
 modifierpropriete[dernierobjet,masse,0.1];
@@ -50,4 +49,3 @@ modifierpropriete[dernierobjet,forme,CERCLE];
 modifierpropriete[dernierobjet,couleur,ROUGE];
 modifierpropriete[dernierobjet,agressivite,1];
 modifierpropriete[dernierobjet,solidite,100];
-
