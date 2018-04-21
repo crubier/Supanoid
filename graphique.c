@@ -8,11 +8,10 @@ void effacer(void)
 void dessin(void)
 {
     PTRCELLULE pcellule;
-    pcellule=originelisteactifs;
+    pcellule=premierecellule(originelisteactifs);
     while(pcellule!=NULL)
     {
         dessiner((*(*pcellule).element));
-     
         pcellule=(*pcellule).suivant;
     }
 }

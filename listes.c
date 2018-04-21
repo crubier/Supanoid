@@ -13,13 +13,13 @@ PTRCELLULE creercellule(PTROBJET pobjet)
     return res;
 }
 
-PTRCELLULE premierecellule(void)
+PTRCELLULE premierecellule(PTRCELLULE origineliste)
 {
     PTRCELLULE pcellulecourante;
     
-    if(originelisteactifs==NULL) return NULL;
+    if(origineliste==NULL) return NULL;
 
-    pcellulecourante=originelisteactifs;
+    pcellulecourante=origineliste;
     while((*pcellulecourante).precedent!=NULL)
     {
         pcellulecourante=(*pcellulecourante).precedent;
@@ -27,13 +27,13 @@ PTRCELLULE premierecellule(void)
     return pcellulecourante;
 }
 
-PTRCELLULE dernierecellule(void)
+PTRCELLULE dernierecellule(PTRCELLULE origineliste)
 {
     PTRCELLULE pcellulecourante;
     
-    if(originelisteactifs==NULL) return NULL;
+    if(origineliste==NULL) return NULL;
 
-    pcellulecourante=originelisteactifs;
+    pcellulecourante=origineliste;
     while((*pcellulecourante).suivant!=NULL)
     {
         pcellulecourante=(*pcellulecourante).suivant;
@@ -41,31 +41,31 @@ PTRCELLULE dernierecellule(void)
     return pcellulecourante;
 }
 
-void ajoutercellule(PTROBJET pobjet, PTRCELLULE origine)
+void ajoutercellule(PTROBJET pobjet, PTRCELLULE* porigineliste)
 {
     PTRCELLULE pcellulecreee;
     printf("Ajouter cellule...");
     printf("OK\n");
     pcellulecreee=creercellule(pobjet);
-    if(origine==NULL)
+    if((*porigineliste)==NULL)
     {
         printf("Creer liste...");
-        origine=pcellulecreee;
+        *porigineliste=pcellulecreee;
         printf("OK\n");
-        return TRUE;
     }
     else
     {
-        return liercellules(dernierecellule(),pcellulecreee);
+        liercellules(dernierecellule(*porigineliste),pcellulecreee);
     }
 }
 
-void supprimercellule(PTRCELLULE pcellule, PTRCELLULE origine)
+void supprimercellule(PTRCELLULE pcellule, PTRCELLULE* porigineliste)
 {
     if(pcellule!=NULL)
     {
         if((*pcellule).suivant!=NULL && (*pcellule).precedent!=NULL)
         {
+            *porigineliste=premierecellule(*porigineliste);
             (*(*pcellule).precedent).suivant=(*pcellule).suivant;
             (*(*pcellule).suivant).precedent=(*pcellule).precedent;
         }
@@ -73,16 +73,18 @@ void supprimercellule(PTRCELLULE pcellule, PTRCELLULE origine)
         {
             if((*pcellule).suivant==NULL && (*pcellule).precedent==NULL)
             {
-                origine=NULL;
+                *porigineliste=NULL;
             }
             else
             {
                 if((*pcellule).suivant==NULL)
                 {
+                    *porigineliste=premierecellule(*porigineliste);
                     (*(*pcellule).precedent).suivant=(*pcellule).suivant;
                 }
                 else
                 {
+                    *porigineliste=premierecellule(*porigineliste);
                     (*(*pcellule).precedent).suivant=(*pcellule).suivant;
                 }     
             }
@@ -90,6 +92,12 @@ void supprimercellule(PTRCELLULE pcellule, PTRCELLULE origine)
         (*pcellule).precedent=NULL;
         (*pcellule).suivant=NULL;
     }
+}
+
+void deplacercellule(PTRCELLULE pcellule, PTRCELLULE* poriginelistea, PTRCELLULE* poriginelisteb)
+{
+    ajoutercellule((*pcellule).element,poriginelisteb);
+    supprimercellule(pcellule,poriginelistea);
 }
 
 BOOLEAN liercellules(PTRCELLULE cellulea, PTRCELLULE celluleb)
@@ -112,15 +120,16 @@ BOOLEAN verifiercellules(PTRCELLULE cellulea, PTRCELLULE celluleb)
     return TRUE;
 }
 
-PTRCELLULE rechercher(char* type, char* nom, int identifiant)
+PTRCELLULE rechercher(char* type, char* nom, int identifiant, PTRCELLULE origineliste)
 {
     PTRCELLULE pcellule;
-    pcellule=originelisteactifs;
+    pcellule=origineliste;
     while((*pcellule).suivant!=NULL)
     {
         if(strcmp((*(*pcellule).element).type,type)==0 && strcmp((*(*pcellule).element).nom,nom)==0 && (*(*pcellule).element).identifiant==identifiant)return pcellule;
         pcellule=(*pcellule).suivant;
     }
+    pcellule=origineliste;
     while((*pcellule).precedent!=NULL)
     {
         if(strcmp((*(*pcellule).element).type,type)==0 && strcmp((*(*pcellule).element).nom,nom)==0 && (*(*pcellule).element).identifiant==identifiant)return pcellule;

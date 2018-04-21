@@ -72,13 +72,13 @@ BOOLEAN liremonde(char* monde)
                 fscanf(fichier," %s ;",type);
                 printf("\n============================================\n\nAjout objet de type %s :\n",type);
                 pobjet=lireobjet(type);
-                ajoutercellule(pobjet);
-                printf("Creation objet de type %s termine ! \n",(*(*dernierecellule()).element).type);
+                ajoutercellule(pobjet,&originelisteactifs);
+                printf("Creation objet de type %s termine ! \n",(*(*dernierecellule(originelisteactifs)).element).type);
             }
             else
             {
                 printf("Ajout propriete %s a l objet %s ( valeur : ",propriete, type );
-                if(entrerpropriete(fichier,(*dernierecellule()).element,propriete)==FALSE)
+                if(entrerpropriete(fichier,(*dernierecellule(originelisteactifs)).element,propriete)==FALSE)
                 {
                     printf("Erreur sur la propriete %s ",propriete);
                     erreur=TRUE;

@@ -78,7 +78,7 @@ OBJET positionsuivante(OBJET objet);
 void rebond(PTROBJET objeta, PTROBJET objetb);
 void gravitation(PTROBJET objeta, PTROBJET objetb);
 void frottement(PTROBJET objet);
-void disparition(PTROBJET objet);
+void disparition(PTRCELLULE pcellule);
 COORD normalecontact(OBJET objeta, OBJET objetb);
 COORD positionrelative(OBJET objeta, OBJET objetb);
 void interactions(void);
@@ -148,14 +148,15 @@ void verifierpointeur(char* p);
 
 /*LISTES*/
 PTRCELLULE creercellule(PTROBJET pobjet);
-PTRCELLULE premierecellule(void);
-PTRCELLULE dernierecellule(void);
-BOOLEAN ajoutercellule(PTROBJET pobjet);
+PTRCELLULE premierecellule(PTRCELLULE origineliste);
+PTRCELLULE dernierecellule(PTRCELLULE origineliste);
+void ajoutercellule(PTROBJET pobjet, PTRCELLULE* porigineliste);
+void supprimercellule(PTRCELLULE pcellule, PTRCELLULE* porigineliste);
+void deplacercellule(PTRCELLULE pcellule, PTRCELLULE* poriginelistea, PTRCELLULE* poriginelisteb);
 BOOLEAN liercellules(PTRCELLULE cellulea, PTRCELLULE celluleb);
 BOOLEAN verifiercellules(PTRCELLULE cellulea, PTRCELLULE celluleb);
-PTRCELLULE rechercher(char* type, char* nom, int identifiant);
+PTRCELLULE rechercher(char* type, char* nom, int identifiant, PTRCELLULE origineliste);
 PTRCELLULE elementnumero(int i);
-void supprimercellule(PTRCELLULE pcellule);
 
 /*FICHIERS*/
 PTROBJET lireobjet(char* type);

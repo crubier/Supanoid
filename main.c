@@ -48,7 +48,7 @@ int main(void)
                 fini = 1;      
                 break;
             case VK_F1:
-                decrire( *(*rechercher("raquette","raquette",0)).element  );
+                decrire( *(*rechercher("raquette","raquette",0,originelisteactifs)).element  );
                 break;
             case VK_F2:
                 effacer();

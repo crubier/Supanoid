@@ -102,8 +102,7 @@ void rebond(PTROBJET objeta, PTROBJET objetb)
             ));
             
         (*objeta).solidite-=(*objetb).agressivite;
-        (*objetb).solidite-=(*objeta).agressivite;
-        
+        (*objetb).solidite-=(*objeta).agressivite;     
         
        
     }     
@@ -136,9 +135,9 @@ void frottement(PTROBJET objet)
         (*objet).acceleration=somme((*objet).acceleration,multiplicationscalaire(positionsuivante(*objet).vitesse,-1*(*objet).frottement));
 }
 
-void disparition(PTROBJET objet)
+void disparition(PTRCELLULE pcellule)
 {
-    
+    if((*(*pcellule).element).solidite<=0)deplacercellule(pcellule,&originelisteactifs,&originelisteinactifs);
 }
 
 COORD normalecontact(OBJET objeta, OBJET objetb)
@@ -160,7 +159,6 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
         }
         else
         {
-
             res=vecteur(0,0);
         }
     }
@@ -195,31 +193,22 @@ void interactions(void)
 {
     PTRCELLULE pcellulea;
     PTRCELLULE pcelluleb;
+    
+    
     pcellulea=originelisteactifs;
     while(pcellulea!=NULL)
     {
-        //indiquer((*(*pcellulea).element).acceleration);printf("\n");
-
-
         pcelluleb=(*pcellulea).suivant;
         while(pcelluleb!=NULL)
         {
-            //printf("Interaction %s - %s \n",(*(*pcellulea).element).nom,(*(*pcelluleb).element).nom);
-            
-            //interactions possibles à 2 objets
-            gravitation((*pcellulea).element,(*pcelluleb).element); 
+            gravitation((*pcellulea).element,(*pcelluleb).element);
             rebond((*pcellulea).element,(*pcelluleb).element);
-  
-
             pcelluleb=(*pcelluleb).suivant;
         }
-        //indiquer((*(*pcellulea).element).acceleration);printf("\n");
-
-
-        //interactions possible à 1 objet 
         frottement((*pcellulea).element);
-        disparition((*pcellulea).element);
+        disparition(pcellulea);
         
         pcellulea=(*pcellulea).suivant;
     }
+    
 }
