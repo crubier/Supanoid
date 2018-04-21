@@ -7,6 +7,7 @@ void effacer(void)
 
 void clavier(void)
 {
+	char temp[LONGCHAINE];
 	switch (getLastKeyPressed())
         { 
             case -1:
@@ -18,10 +19,10 @@ void clavier(void)
                 (*(*raquette).element).acceleration.x=SENSIBILITE;
                 break;
             case VK_UP:
-                (*(*raquette).element).acceleration.y=-SENSIBILITE;
+                (*(*raquette).element).acceleration.y=SENSIBILITE;
                 break;
             case VK_DOWN:   
-                (*(*raquette).element).acceleration.y=SENSIBILITE;
+                (*(*raquette).element).acceleration.y=-SENSIBILITE;
                 break;
             case VK_Q:
                 (*(*fenetre).element).acceleration.x=-SENSIBILITE;
@@ -30,45 +31,67 @@ void clavier(void)
                 (*(*fenetre).element).acceleration.x=SENSIBILITE;
                 break;
             case VK_Z:
-                (*(*fenetre).element).acceleration.y=-SENSIBILITE;
+                (*(*fenetre).element).acceleration.y=SENSIBILITE;
                 break;
             case VK_S:
-                (*(*fenetre).element).acceleration.y=SENSIBILITE;
+                (*(*fenetre).element).acceleration.y=-SENSIBILITE;
                 break;
             case VK_ESCAPE:
                 fini = 1;      
                 break;
 			case VK_A:
+			    executercommande("jouerson[wow];");
 				(*(*fenetre).element).position=lireCOORD("(0:0)");
 				(*(*fenetre).element).vitesse=lireCOORD("(0:0)");
 				(*(*fenetre).element).acceleration=lireCOORD("(0:0)");
 				break;
+			case VK_T:
+				if(recherchertypenom(creeridentifiant("trounoir","trounoir",0),premierecellule(),1)==NULL)
+			    executercommande("creertrounoir[];");
+			    executercommande("jouerson[wow];");
+				break;
+			case VK_Y:
+			    executercommande("tuertrounoir[];");
+			    executercommande("jouerson[wow];");
+				break;
             case VK_F1:
+			    executercommande("jouerson[wow];");
                 decrireLISTEdetail();
                 break;
             case VK_F2:
-                 executercommande("initialiser[];");
+			    executercommande("jouerson[wow];");
+                executercommande("initialiser[];");
                 break;
             case VK_F3:
+			    executercommande("jouerson[wow];");
                 DT*=2;
                 break;
             case VK_F4:
+			    executercommande("jouerson[wow];");
                 DT/=2;
                 break;
 			case VK_F6:
+			    executercommande("jouerson[wow];");
 				SENSIBILITE/=1.05;
 				break;
 			case VK_F7:
+			    executercommande("jouerson[wow];");
 				SENSIBILITE*=1.05;
 				break;
 			case VK_F8:
+			    executercommande("jouerson[wow];");
 				executercommande("affichernoms[255];");
 				break;
 			case VK_F9:
+			    executercommande("jouerson[wow];");
 				executercommande("cachernoms[255];");
 				break;
             case VK_P:
                 pause();
+                break;
+            case VK_ENTER:
+                scanf("%s",temp);
+				printf(" > %s\n",executercommande(temp));
                 break;
         }
 }
@@ -98,8 +121,9 @@ void dessiner(PTRCELLULE pcellule)
    	char nom[LONGCHAINE];
     float x,y;
     x=((*(*pcellule).element).position.x-0.5*(*(*pcellule).element).dimensions.x)-((*(*fenetre).element).position.x-0.5*(*(*fenetre).element).dimensions.x);
-    y=((*(*pcellule).element).position.y-0.5*(*(*pcellule).element).dimensions.y)-((*(*fenetre).element).position.y-0.5*(*(*fenetre).element).dimensions.y);
-   	
+    y=(-(*(*pcellule).element).position.y-0.5*(*(*pcellule).element).dimensions.y)-(-(*(*fenetre).element).position.y-0.5*(*(*fenetre).element).dimensions.y);
+
+
     setForegroundColor((*(*pcellule).element).couleur);
 
     if(strcmp((*(*pcellule).element).graphique,"INCONNU")!=0)/*si le fichier n'existe pas, rien ne sera affiché, les formes seront affichée sulement si graphique = INCONNU*/
@@ -130,7 +154,6 @@ void dessiner(PTRCELLULE pcellule)
 
 void decrireLISTE(void)
 {
-	printf("Ecriture description de la liste\n");
 	fprintf(journal,"Liste : %s\n",ecrireLISTE());
 }
 
@@ -138,10 +161,9 @@ void decrireLISTEdetail(void)
 {
 	char res[LONGCHAINE];
 	char temp[LONGCHAINE];
-	printf("Ecriture description detaillee de la liste\n");
 	int i;
 	
-		fprintf(journal,"==================================================\n");
+		fprintf(journal,"\n==================================================\n");
 		fprintf(journal,"Description détaillée de la liste\n");
 		fprintf(journal,"==================================================\n\n");
 
@@ -155,7 +177,7 @@ void decrireLISTEdetail(void)
 	}
 
 		fprintf(journal,"==================================================\n");
-		fprintf(journal,"Fin de la escription détaillée de la liste\n");
+		fprintf(journal,"Fin de la description détaillée de la liste\n");
 		fprintf(journal,"==================================================\n\n");
 
 }
@@ -176,12 +198,13 @@ void initialisation(void)
 {
 
 	fprintf(journal,"Initialisation ");
-    fenetre=rechercher(creeridentifiant("fenetre","fenetre",0));
-    raquette=rechercher(creeridentifiant("raquette","raquette",0));
+    fenetre=recherchertype(creeridentifiant("fenetre","fenetre",0),premierecellule(),1);
+    raquette=recherchertype(creeridentifiant("raquette","raquette",0),premierecellule(),1);
 	fprintf(journal,"fenetre : %s ",ecrireIDENTIFIANT(*(*fenetre).identifiant));
 
-	SENSIBILITE=0.2;
+	SENSIBILITE=0.3;
     DT=0.002;
+    ATTRACTION=0.1;
 	fini = 0;
 
 	fprintf(journal,": OK\n");   
@@ -199,6 +222,9 @@ void initialisationgraphique()
 
     clearRect(0, 0, 800, 800);
 
+
+    registerKeyPressed(VK_ENTER);   
+    registerKeyPressed(VK_SPACE);   
     registerKeyPressed(VK_LEFT);       
     registerKeyPressed(VK_RIGHT);     
     registerKeyPressed(VK_UP);       
@@ -255,12 +281,3 @@ void cloturegraphique(void)
     finish(); 
 }
 
-void rapportererreur(void)
-{
-    if(strcmp(erreur,VIDE)!=0)
-    {
-        printf("\nDescription erreur==========================\n\n");
-        printf("%s\n",erreur);
-        printf("\nFin Description erreur =====================\n\n");
-    }
-}

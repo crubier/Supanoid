@@ -129,6 +129,7 @@ void degradation(PTRCELLULE pcellule)
     if((*(*pcellule).element).solidite<=0)
 	{
 		(*(*pcellule).element).couche=0;
+		executercommande("jouerson[mort];");
 	}
 }
 
@@ -151,6 +152,8 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
 
 			res=somme(res,multiplicationscalaire(vecteur(1/objeta.dimensions.x,0),produitscalaire(vecteur(1,0),difference(objeta.position,objetb.position))));
         
+            res=normalisation(res);
+
 			executercommande("jouerson[rebond1];");
 		}
         else
@@ -171,6 +174,8 @@ COORD normalecontact(OBJET objeta, OBJET objetb)
             res=normalisation(res);
 
 			res=somme(res,multiplicationscalaire(vecteur(-1/objetb.dimensions.x,0),produitscalaire(vecteur(1,0),difference(objeta.position,objetb.position))));
+
+            res=normalisation(res);
 
 			executercommande("jouerson[rebond1];");        
 		}

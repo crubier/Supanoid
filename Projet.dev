@@ -15,7 +15,7 @@ CppCompiler=
 Linker=lib/win32/libjvm.a_@@_
 IsCpp=0
 Icon=Projet.ico
-ExeOutput=
+ExeOutput=../Supanoid
 ObjectOutput=
 OverrideOutput=1
 OverrideOutputName=Supanoid.exe
@@ -52,8 +52,8 @@ BuildCmd=
 [VersionInfo]
 Major=0
 Minor=0
-Release=7
-Build=29
+Release=8
+Build=240
 LanguageID=1036
 CharsetID=1252
 CompanyName=LECRUBIER OLIVIER
@@ -64,7 +64,7 @@ LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=0.7
+ProductVersion=0.8
 AutoIncBuildNr=1
 
 [Unit6]

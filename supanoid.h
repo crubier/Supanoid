@@ -8,7 +8,7 @@
 
 #define LONGCHAINE 256
 #define NBPARAM 32
-#define ATTRACTION 0.1
+
 #define VIDE ""
 
 typedef enum {INCONNUE, RECTANGLE, CERCLE, RAQUETTE} FORME;
@@ -64,20 +64,23 @@ typedef struct cellulestruct
 PTRCELLULE origineliste;
 PTRCELLULE fenetre;
 PTRCELLULE raquette;
-char erreur[LONGCHAINE];
 int fini;
 FILE* journal;
 char repertoire[LONGCHAINE];
 float DT;
 float SENSIBILITE;
+float ATTRACTION;
 
 /*ACTIONS*/
 void action_jouerson(char* chaine);
 void action_creerobjet(char* chaine);
+void action_supprimerobjet(char* chaine);
 void action_modifierpropriete(char* chaine);
 void action_initialiser(char* chaine);
 void action_affichernoms(char* chaine);
 void action_cachernoms(char* chaine);
+void action_executer(char* chaine);
+void action_ecrire(char* chaine);
 
 /*GEOMETRIE*/
 COORD vecteur(float x, float y);
@@ -107,7 +110,7 @@ void initialisation(void);
 void cloture(void);
 void initialisationgraphique(void);
 void cloturegraphique(void);
-void rapportererreur(void);
+
 
 /*MANIPULATIONS*/
 PTROBJET creerobjet
@@ -152,6 +155,7 @@ PTRCELLULE creercellule
 PTRCELLULE copiercellule(PTRCELLULE pcellule);
 PTRCELLULE nouvellecellule(void);
 
+void supprimercellule(PTRCELLULE pcellule);
 void liercellules(PTRCELLULE pcellulea, PTRCELLULE pcelluleb);
 void verifiercellules(PTRCELLULE pcellulea, PTRCELLULE pcelluleb);
 void verifierpointeur(char* p);
@@ -161,7 +165,14 @@ PTRCELLULE dernierecellule(void);
 PTRCELLULE rechercher(PTRIDENTIFIANT pidentifiant);
 PTRCELLULE cellulenumero(int i);
 int nombrecellules(void);
-int compareridentifiants(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIANT pidentifiantb);
+PTRIDENTIFIANT prochainidentifiant(PTRIDENTIFIANT pidentifiantdepart);
+
+PTRCELLULE recherchertype(PTRIDENTIFIANT pidentifiant,  PTRCELLULE pi, int sens);
+PTRCELLULE recherchertypenom(PTRIDENTIFIANT pidentifiant,  PTRCELLULE pi, int sens);
+PTRCELLULE recherchertypenomnumero(PTRIDENTIFIANT pidentifiant,  PTRCELLULE pi, int sens);
+int compareridentifiantstype(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIANT pidentifiantb);
+int compareridentifiantstypenom(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIANT pidentifiantb);
+int compareridentifiantstypenomnumero(PTRIDENTIFIANT pidentifianta,PTRIDENTIFIANT pidentifiantb);
 
 char* creerchaine(char* chaine);
 char* lireligne(char* lignecommande);
@@ -188,8 +199,8 @@ char* ecrireLISTE(void);
 PTRCELLULE lireOBJET(char* chaine);
 char* ecrireOBJET(OBJET a);
 
-void executercommande(char* lignecommande);
-void executerfichier(char* parametres);
+char* executercommande(char* lignecommande);
+char* executerfichier(char* parametres);
 void entrerpropriete(PTRCELLULE pcellule, char* propriete, char* valeur);
 
 /*PHYSIQUE*/

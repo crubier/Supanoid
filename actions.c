@@ -10,12 +10,14 @@ void action_jouerson(char* chaine)
 
 void action_creerobjet(char* chaine)
 {
-	nouvellecellule();
+	IDENTIFIANT identifiant;
+	identifiant = lireIDENTIFIANT(chaine+1*LONGCHAINE*sizeof(char));
+	creercellule(nouvelobjet(),copieridentifiant(&identifiant),NULL,NULL);
+}
 
-	(*(*dernierecellule()).identifiant).type=creerchaine(chaine+1*LONGCHAINE*sizeof(char));
-	(*(*dernierecellule()).identifiant).nom=creerchaine(chaine+2*LONGCHAINE*sizeof(char));
-	(*(*dernierecellule()).identifiant).numero=lireint(chaine+3*LONGCHAINE*sizeof(char));
-
+void action_supprimerobjet(char* chaine)
+{
+	supprimercellule(lireOBJET(chaine+1*LONGCHAINE*sizeof(char)));
 }
 
 void action_modifierpropriete(char* chaine)
@@ -57,4 +59,14 @@ void action_cachernoms(char* chaine)
 		if(((*(*cellulenumero(i)).element).couche & couche) !=0)
 		(*(*cellulenumero(i)).element).texte=creerchaine("INCONNU");
 	}
+}
+
+void action_executer(char* chaine)
+{
+	executerfichier(chaine+1*LONGCHAINE*sizeof(char));
+}
+
+void action_ecrire(char* chaine)
+{
+	printf("%s\n",chaine+1*LONGCHAINE*sizeof(char));
 }
