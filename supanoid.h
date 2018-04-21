@@ -6,7 +6,10 @@
 #include "graphic.h"
 #include "key.h"
 
-typedef enum {RECTANGLE, CERCLE} FORME;
+#define LONGUEURMAXCHAINE 100
+#define DT 0.005
+
+typedef enum {RECTANGLE, CERCLE, INCONNUE} FORME;
 
 typedef struct coordstruct
 {
@@ -17,17 +20,21 @@ typedef struct coordstruct
 typedef struct objetstruct
 {
         char* nom;
+  		int identifiant;
+
         COORD position;
  		COORD vitesse;
  		COORD acceleration;
+
  		COORD dimensions;
- 		char* graphique;
- 		struct objetstruct* contenu;
  		float solidite;
  		float masse;
  		float frottement;
  		float rebondissement;
- 		int identifiant;
+
+ 		struct objetstruct* contenu;
+ 		char* graphique;
+        COLOR couleur;
  		FORME forme;
  		
 } OBJET, *PTROBJET;
@@ -40,6 +47,11 @@ typedef struct cellulestruct
 } CELLULE, *PTRCELLULE;
 
 
+/*VARIABLES GLOBALES*/
+COORD taillefenetre;
+
+
+
 /*PHYSIQUE*/
 void mouvement(PTROBJET objet);
 OBJET positionsuivante(OBJET objet);
@@ -49,6 +61,7 @@ COORD collision(OBJET objeta, OBJET objetb);
 /*GRAPHIQUES*/
 void dessiner(OBJET objet);
 void effacer(OBJET objet);
+void initialisationgraphiques();
 void indiquer(COORD a);
 void decrire(OBJET a);
 
@@ -70,17 +83,25 @@ COORD arrondi(COORD a);
 /*OBJETS*/
 OBJET creerobjet
 (
-    char* nom,
-   	int identifiant,
-    COORD position,
- 	COORD vitesse,
- 	COORD acceleration,
- 	COORD dimensions,
- 	char* graphique,
- 	PTROBJET contenu,
- 	float solidite,
- 	float masse,
- 	float frottement,
- 	float rebondissement,
- 	FORME forme
+        char* nom,
+  		int identifiant,
+
+        COORD position,
+ 		COORD vitesse,
+ 		COORD acceleration,
+
+ 		COORD dimensions,
+ 		float solidite,
+ 		float masse,
+ 		float frottement,
+ 		float rebondissement,
+
+ 		PTROBJET contenu,
+ 		char* graphique,
+        COLOR couleur,
+ 		FORME forme
 );
+
+/*FICHIERS*/
+BOOLEAN entrerpropriete(FILE* fichier, PTROBJET objet, char* propriete);
+OBJET lireobjet(char* nomobjet);

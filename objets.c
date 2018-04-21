@@ -1,46 +1,53 @@
 #include "supanoid.h"
 
+
+
 OBJET creerobjet
 (
-    char* nom,
-   	int identifiant,
-    COORD position,
- 	COORD vitesse,
- 	COORD acceleration,
- 	COORD dimensions,
- 	char* graphique,
- 	PTROBJET contenu,
- 	float solidite,
- 	float masse,
- 	float frottement,
- 	float rebondissement,
- 	FORME forme
+        char* nom,
+  		int identifiant,
+
+        COORD position,
+ 		COORD vitesse,
+ 		COORD acceleration,
+
+ 		COORD dimensions,
+ 		float solidite,
+ 		float masse,
+ 		float frottement,
+ 		float rebondissement,
+
+ 		PTROBJET contenu,
+ 		char* graphique,
+        COLOR couleur,
+ 		FORME forme
 )
 {
-    PTROBJET adresse;
+    PTROBJET objet;
     char* temp;
     
-    adresse=malloc(sizeof(OBJET));
+    objet=malloc(sizeof(OBJET));
     
-    temp=malloc(100*sizeof(char));
+    temp=malloc(LONGUEURMAXCHAINE*sizeof(char));
     strcpy(temp,nom);
-    (*adresse).nom=temp;
+    (*objet).nom=temp;
     
-    temp=malloc(100*sizeof(char));
+    temp=malloc(LONGUEURMAXCHAINE*sizeof(char));
     strcpy(temp,graphique);
-    (*adresse).graphique=temp;
+    (*objet).graphique=temp;
     
-    (*adresse).contenu=contenu;
-    (*adresse).position=position;
-    (*adresse).vitesse=vitesse;
-    (*adresse).acceleration=acceleration;
-    (*adresse).dimensions=dimensions;
-    (*adresse).masse=masse;
-    (*adresse).solidite=solidite;
-    (*adresse).rebondissement=rebondissement;
-    (*adresse).frottement=frottement;
-    (*adresse).forme=forme;
-    (*adresse).identifiant=identifiant;
+    (*objet).contenu=contenu;
+    (*objet).position=position;
+    (*objet).vitesse=vitesse;
+    (*objet).acceleration=acceleration;
+    (*objet).dimensions=dimensions;
+    (*objet).masse=masse;
+    (*objet).solidite=solidite;
+    (*objet).rebondissement=rebondissement;
+    (*objet).frottement=frottement;
+    (*objet).forme=forme;
+    (*objet).identifiant=identifiant;
+    (*objet).couleur=couleur;
     
-    return *adresse;
+    return *objet;
 }
