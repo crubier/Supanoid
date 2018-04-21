@@ -1,0 +1,52 @@
+type = balle ;
+nom = balle ;
+identifiant = 0 ;
+position.x = 400 ;
+position.y = 400 ;
+
+type = brique ;
+nom = brique ;
+identifiant = 1 ;
+position.x = 600 ;
+position.y = 400 ;
+
+type = brique ;
+nom = brique ;
+identifiant = 2 ;
+position.x = 660 ;
+position.y = 400 ;
+
+type = balle2 ;
+nom = balle ;
+identifiant = 2 ;
+position.x = 400 ;
+position.y = 200 ;
+
+
+type = balle3 ;
+nom = balle ;
+identifiant = 3 ;
+position.x = 600 ;
+position.y = 200 ;
+
+
+type = rebord ;
+identifiant = 0 ;
+position.x = 400 ;
+position.y = -300 ;
+dimensions.x = 800 ;
+dimensions.y = 600 ;
+
+type = rebord ;
+identifiant = 0 ;
+position.x = -400 ;
+position.y = 300 ;
+dimensions.x = 800 ;
+dimensions.y = 600 ;
+
+type = rebord ;
+identifiant = 0 ;
+position.x = 1200 ;
+position.y = 300 ;
+dimensions.x = 800 ;
+dimensions.y = 600 ;

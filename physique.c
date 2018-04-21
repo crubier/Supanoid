@@ -5,6 +5,17 @@ void mouvement(PTROBJET objet)
     (*objet)=positionsuivante((*objet));
 }
 
+void mouvements(void)
+{
+    PTRCELLULE pcellule;
+    pcellule=origineliste;
+    while(pcellule!=NULL)
+    {
+        mouvement((*pcellule).element);
+        pcellule=(*pcellule).suivant;
+    }
+}
+
 OBJET positionsuivante(OBJET objet)
 {
     OBJET res;
@@ -92,4 +103,21 @@ COORD collision(OBJET objeta, OBJET objetb)
     }
     
  	return res;
+}
+
+void interactions(void)
+{
+    PTRCELLULE pcellulea;
+    PTRCELLULE pcelluleb;
+    pcellulea=origineliste;
+    while(pcellulea!=NULL)
+    {
+        pcelluleb=(*pcellulea).suivant;
+        while(pcelluleb!=NULL)
+        {
+            rebond((*pcellulea).element,(*pcelluleb).element,collision(*(*pcellulea).element,*(*pcelluleb).element));
+            pcelluleb=(*pcelluleb).suivant;
+        }
+        pcellulea=(*pcellulea).suivant;
+    }
 }

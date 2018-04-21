@@ -1,100 +1,112 @@
 #include "supanoid.h"
 
-OBJET lireobjet(char* nomobjet)
+PTROBJET lireobjet(char* type)
 {
-	OBJET objet;
+	PTROBJET pobjet;
 	char nom[LONGUEURMAXCHAINE];
-    char valeur[LONGUEURMAXCHAINE];
     char propriete[LONGUEURMAXCHAINE];
 	FILE* fichier;
 
-    objet=creerobjet(nom,0,vecteur(0,0),vecteur(0,0),vecteur(0,0),vecteur(0,0),1,1,0,1,NULL,"",BLANC,CERCLE);
+    pobjet=creerobjet(type,0,type,vecteur(0,0),vecteur(0,0),vecteur(0,0),vecteur(0,0),1,1,0,1,NULL,"AUCUN",NOIR,RECTANGLE);
     strcpy(nom,"objets/");
-    strcat(nom,nomobjet);
+    strcat(nom,type);
     strcat(nom,".obj");
 	fichier=fopen(nom,"r");
 
 	if (fichier==NULL)
 	{
-		printf("Impossible d'ouvrir le fichier de description de l'objet %s",nomobjet);
+		printf("Impossible d'ouvrir le fichier de description du type d'objet %s",type);
 	}
 	else
 	{
-        while(fscanf(fichier," %s =",propriete)!=EOF)
+        while(fscanf(fichier," %s =",propriete)!=EOF && strcmp(propriete,"type")!=0)
         {
             fseek(fichier,1,SEEK_CUR);
-            entrerpropriete(fichier,&objet,propriete);
+            if(entrerpropriete(fichier,pobjet,propriete)==FALSE)printf("Erreur sur la propriete %s \n",propriete);
         }
     
 		fclose(fichier);
 	}
-	return objet;
+	return pobjet;
 }
 
-BOOLEAN entrerpropriete(FILE* fichier, PTROBJET objet, char* propriete)
+BOOLEAN entrerpropriete(FILE* fichier, PTROBJET pobjet, char* propriete)
 {
     char temp[LONGUEURMAXCHAINE];
     char* temp1;
    
     if(strcmp(propriete,"identifiant")==0)
     {
-        fscanf(fichier," %d ;",&(*objet).identifiant);
+        fscanf(fichier," %d ;",&(*pobjet).identifiant);
+        return TRUE;
     }
     
     if(strcmp(propriete,"position.x")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).position.x);
+        fscanf(fichier," %f ;",&(*pobjet).position.x);
+        return TRUE;
     }
     if(strcmp(propriete,"position.y")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).position.y);
+        fscanf(fichier," %f ;",&(*pobjet).position.y);
+        return TRUE;
     }
     
     if(strcmp(propriete,"vitesse.x")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).vitesse.x);
+        fscanf(fichier," %f ;",&(*pobjet).vitesse.x);
+        return TRUE;
     }
     if(strcmp(propriete,"vitesse.y")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).vitesse.y);
+        fscanf(fichier," %f ;",&(*pobjet).vitesse.y);
+        return TRUE;
     }
     
     if(strcmp(propriete,"acceleration.x")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).acceleration.x);
+        fscanf(fichier," %f ;",&(*pobjet).acceleration.x);
+        return TRUE;
     }
     if(strcmp(propriete,"acceleration.y")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).acceleration.y);
+        fscanf(fichier," %f ;",&(*pobjet).acceleration.y);
+        return TRUE;
     }
     
     if(strcmp(propriete,"dimensions.x")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).dimensions.x);
+        fscanf(fichier," %f ;",&(*pobjet).dimensions.x);
+        return TRUE;
     }
     if(strcmp(propriete,"dimensions.y")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).dimensions.y);
+        fscanf(fichier," %f ;",&(*pobjet).dimensions.y);
+        return TRUE;
     }
     
     if(strcmp(propriete,"solidite")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).solidite);
+        fscanf(fichier," %f ;",&(*pobjet).solidite);
+        return TRUE;
     }
     
     if(strcmp(propriete,"masse")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).masse);
+        fscanf(fichier," %f ;",&(*pobjet).masse);
+        return TRUE;
     }
     
     if(strcmp(propriete,"frottement")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).frottement);
+        fscanf(fichier," %f ;",&(*pobjet).frottement);
+        return TRUE;
     }
     
     if(strcmp(propriete,"rebondissement")==0)
     {
-        fscanf(fichier," %f ;",&(*objet).rebondissement);
+        fscanf(fichier," %f ;",&(*pobjet).rebondissement);
+        return TRUE;
     }
     
     if(strcmp(propriete,"graphique")==0)
@@ -102,19 +114,31 @@ BOOLEAN entrerpropriete(FILE* fichier, PTROBJET objet, char* propriete)
         fscanf(fichier," %s ;",temp);
         temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
         strcpy(temp1,temp);
-        strcpy((*objet).graphique,temp);
+        (*pobjet).graphique=temp1;
+        return TRUE;
+    }
+    
+    if(strcmp(propriete,"nom")==0)
+    {
+        fscanf(fichier," %s ;",temp);
+        temp1=malloc(LONGUEURMAXCHAINE*sizeof(char));
+        strcpy(temp1,temp);
+        (*pobjet).nom=temp1;
+        return TRUE;
     }
 
     if(strcmp(propriete,"forme")==0)
     {
         fscanf(fichier," %s ;",temp);
-        (*objet).forme=conversionFORME(temp);
+        (*pobjet).forme=conversionFORME(temp);
+        return TRUE;
     }
     
     if(strcmp(propriete,"couleur")==0)
     {
         fscanf(fichier," %s ;",temp);
-        (*objet).couleur=conversionCOLOR(temp);
+        (*pobjet).couleur=conversionCOLOR(temp);
+        return TRUE;
     }
 
     return FALSE;    
@@ -141,4 +165,52 @@ int conversionCOLOR(char* couleur)
     if(strcmp(couleur,"ORANGE")==0)return ORANGE;
     if(strcmp(couleur,"ROSE")==0)return ROSE;
     return BLANC;
+}
+
+BOOLEAN liremonde(char* monde)
+{
+	PTROBJET pobjet;
+	CELLULE cellule;
+	char nom[LONGUEURMAXCHAINE];
+	char type[LONGUEURMAXCHAINE];
+    char propriete[LONGUEURMAXCHAINE];
+	FILE* fichier;
+
+    strcpy(nom,"mondes/");
+    strcat(nom,monde);
+    strcat(nom,".niv");
+	fichier=fopen(nom,"r");
+
+	if (fichier==NULL)
+	{
+		printf("Impossible d'ouvrir le fichier de description du monde %s",monde);
+		return FALSE;
+	}
+	else
+	{
+        
+        while(fscanf(fichier," %s =",propriete)!=EOF)
+        {
+            fseek(fichier,1,SEEK_CUR);
+            if(strcmp(propriete,"type")==0)
+            {
+                fscanf(fichier," %s ;",type);
+                printf("Ajout objet de type %s :\n",type);
+                decrire(*lireobjet(type));
+                pobjet=lireobjet(type);
+                ajoutercellule(pobjet);
+                printf("Ajout objet de type %s termine ! \n\n",(*(*dernierecellule()).element).type);
+            }
+            else
+            {
+                printf("Ajout propriete %s :\n",type);
+                if(entrerpropriete(fichier,(*dernierecellule()).element,propriete)==FALSE)printf("Erreur sur la propriete %s \n",propriete);
+            }
+        }
+        
+        //objet=creerobjet(type,0,type,vecteur(0,0),vecteur(0,0),vecteur(0,0),vecteur(0,0),1,1,0,1,NULL,"AUCUN",BLANC,CERCLE);
+
+		fclose(fichier);
+	}
+	return TRUE;
 }

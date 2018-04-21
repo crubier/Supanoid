@@ -1,17 +1,32 @@
 #include "supanoid.h"
 
-void effacer(OBJET objet)
+void effacer(void)
 {
-    clearRect(0, 0, (int)taillefenetre.x, (int)taillefenetre.y);
+    clearRect(0, 0, (int)fenetre.dimensions.x, (int)fenetre.dimensions.y);
+}
+
+void dessin(void)
+{
+    PTRCELLULE pcellule;
+    pcellule=origineliste;
+    while(pcellule!=NULL)
+    {
+        dessiner((*(*pcellule).element));        
+        pcellule=(*pcellule).suivant;
+    }
 }
 
 void dessiner(OBJET objet)
 {
     FILE* fichier;
+   	char nom[LONGUEURMAXCHAINE];
+   	
     setForegroundColor(objet.couleur);
-    if(strcmp(objet.graphique,"aucun")!=0)/*si le fichier n'existe pas, rien ne sera affiché*/
+    if(strcmp(objet.graphique,"AUCUN")!=0)/*si le fichier n'existe pas, rien ne sera affiché, les formes seront affichée sulement si graphique = AUCUN*/
     {
-        drawImage(objet.graphique, objet.position.x-0.5*objet.dimensions.x, objet.position.y-0.5*objet.dimensions.y);
+        strcpy(nom,"images/");
+        strcat(nom,objet.graphique);
+        drawImage(nom, objet.position.x-0.5*objet.dimensions.x, objet.position.y-0.5*objet.dimensions.y);
     }
     else
     {
@@ -27,10 +42,9 @@ void dessiner(OBJET objet)
     }
 }
 
-void initialisationgraphiques()
+void initialisationgraphiques(void)
 {
-    taillefenetre=vecteur(800,800);
-    start((int)ceil(taillefenetre.x), (int)ceil(taillefenetre.y));
+    start((int)fenetre.dimensions.x, (int)fenetre.dimensions.y);
     registerKeyPressed(VK_LEFT);       
     registerKeyPressed(VK_RIGHT);     
     registerKeyPressed(VK_UP);       
@@ -39,8 +53,8 @@ void initialisationgraphiques()
     registerKeyPressed(VK_F2); 
     
 
-    setBackgroundColor(BLACK);        
-    clearRect(0, 0, 800, 800);      
+    setBackgroundColor(fenetre.couleur);        
+    clearRect(0, 0, (int)fenetre.dimensions.x, (int)fenetre.dimensions.y);      
 }
 
 void indiquer(COORD a)
@@ -50,7 +64,7 @@ void indiquer(COORD a)
 
 void decrire(OBJET a)
 {
-    printf("\n");
+    printf("\n==============================\n\n");
     printf("Nom            : %s \n",a.nom);
     printf("Identifiant    : %d\n",a.identifiant);
     printf("\n");
@@ -70,6 +84,6 @@ void decrire(OBJET a)
     {printf("Contenu        : %s\n","Aucun");}
     else
     {printf("Contenu        : %s\n",(*a.contenu).nom);}
-    printf("\n==============================\n");
+    printf("\n==============================\n\n");
 }
 

@@ -7,7 +7,7 @@
 #include "key.h"
 
 #define LONGUEURMAXCHAINE 100
-#define DT 0.005
+#define DT 0.002
 
 typedef enum {RECTANGLE, CERCLE, INCONNUE} FORME;
 
@@ -21,6 +21,7 @@ typedef struct objetstruct
 {
         char* nom;
   		int identifiant;
+  		char* type;
 
         COORD position;
  		COORD vitesse;
@@ -34,34 +35,37 @@ typedef struct objetstruct
 
  		struct objetstruct* contenu;
  		char* graphique;
-        COLOR couleur;
+        COULEUR couleur;
  		FORME forme;
  		
 } OBJET, *PTROBJET;
 
 typedef struct cellulestruct
 {
- 		OBJET element; 
+ 		struct objetstruct* element; 
 		struct cellulestruct* suivant; 
 		struct cellulestruct* precedent;
 } CELLULE, *PTRCELLULE;
 
 
 /*VARIABLES GLOBALES*/
-COORD taillefenetre;
-
+OBJET fenetre;
+PTRCELLULE origineliste;
 
 
 /*PHYSIQUE*/
 void mouvement(PTROBJET objet);
+void mouvements(void);
 OBJET positionsuivante(OBJET objet);
 void rebond(PTROBJET objeta, PTROBJET objetb, COORD normale);
 COORD collision(OBJET objeta, OBJET objetb);
+void interactions(void);
 
 /*GRAPHIQUES*/
+void effacer(void);
+void dessin(void);
 void dessiner(OBJET objet);
-void effacer(OBJET objet);
-void initialisationgraphiques();
+void initialisationgraphiques(void);
 void indiquer(COORD a);
 void decrire(OBJET a);
 
@@ -81,10 +85,11 @@ float distanceaxe(COORD a, COORD b, COORD axe);
 COORD arrondi(COORD a);
 
 /*OBJETS*/
-OBJET creerobjet
+PTROBJET creerobjet
 (
         char* nom,
   		int identifiant,
+  		char* type,
 
         COORD position,
  		COORD vitesse,
@@ -98,10 +103,24 @@ OBJET creerobjet
 
  		PTROBJET contenu,
  		char* graphique,
-        COLOR couleur,
+        COULEUR couleur,
  		FORME forme
 );
 
+
+/*LISTES*/
+PTRCELLULE creercellule(PTROBJET pobjet);
+PTRCELLULE dernierecellule(void);
+BOOLEAN ajoutercellule(PTROBJET pobjet);
+BOOLEAN liercellules(PTRCELLULE cellulea, PTRCELLULE celluleb);
+BOOLEAN verifiercellules(PTRCELLULE cellulea, PTRCELLULE celluleb);
+PTRCELLULE rechercher(char* nom, int identifiant);
+PTRCELLULE elementnumero(int i);
+
 /*FICHIERS*/
 BOOLEAN entrerpropriete(FILE* fichier, PTROBJET objet, char* propriete);
-OBJET lireobjet(char* nomobjet);
+PTROBJET lireobjet(char* type);
+int conversionFORME(char* forme);
+int conversionCOLOR(char* couleur);
+BOOLEAN liremonde(char* monde);
+

@@ -1,11 +1,10 @@
 #include "supanoid.h"
 
-
-
-OBJET creerobjet
+PTROBJET creerobjet
 (
         char* nom,
   		int identifiant,
+  		char* type,
 
         COORD position,
  		COORD vitesse,
@@ -19,35 +18,40 @@ OBJET creerobjet
 
  		PTROBJET contenu,
  		char* graphique,
-        COLOR couleur,
+        COULEUR couleur,
  		FORME forme
 )
+
 {
-    PTROBJET objet;
+    PTROBJET pobjet;
     char* temp;
     
-    objet=malloc(sizeof(OBJET));
+    pobjet=malloc(sizeof(OBJET));
     
     temp=malloc(LONGUEURMAXCHAINE*sizeof(char));
     strcpy(temp,nom);
-    (*objet).nom=temp;
+    (*pobjet).nom=temp;
     
     temp=malloc(LONGUEURMAXCHAINE*sizeof(char));
     strcpy(temp,graphique);
-    (*objet).graphique=temp;
+    (*pobjet).graphique=temp;
     
-    (*objet).contenu=contenu;
-    (*objet).position=position;
-    (*objet).vitesse=vitesse;
-    (*objet).acceleration=acceleration;
-    (*objet).dimensions=dimensions;
-    (*objet).masse=masse;
-    (*objet).solidite=solidite;
-    (*objet).rebondissement=rebondissement;
-    (*objet).frottement=frottement;
-    (*objet).forme=forme;
-    (*objet).identifiant=identifiant;
-    (*objet).couleur=couleur;
+    temp=malloc(LONGUEURMAXCHAINE*sizeof(char));
+    strcpy(temp,type);
+    (*pobjet).type=temp;
     
-    return *objet;
+    (*pobjet).contenu=contenu;
+    (*pobjet).position=position;
+    (*pobjet).vitesse=vitesse;
+    (*pobjet).acceleration=acceleration;
+    (*pobjet).dimensions=dimensions;
+    (*pobjet).masse=masse;
+    (*pobjet).solidite=solidite;
+    (*pobjet).rebondissement=rebondissement;
+    (*pobjet).frottement=frottement;
+    (*pobjet).forme=forme;
+    (*pobjet).identifiant=identifiant;
+    (*pobjet).couleur=couleur;
+    
+    return pobjet;
 }
